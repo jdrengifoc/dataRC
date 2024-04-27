@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>process_data_with_partial_dict</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">process_data_with_partial_dict</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dataRC)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(testthat)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Attaching package: &#39;arrow&#39;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following object is masked from &#39;package:testthat&#39;:</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     matches</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following object is masked from &#39;package:utils&#39;:</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     timestamp</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Attaching package: &#39;dplyr&#39;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following object is masked from &#39;package:testthat&#39;:</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     matches</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following objects are masked from &#39;package:stats&#39;:</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     filter, lag</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following objects are masked from &#39;package:base&#39;:</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># NVS data.</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co"># library(dplyr)</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># library(arrow)</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># library(stringr)</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># folder &lt;- &#39;../../_Data/DANE_EEVV_anominizadas/Nofetales&#39;</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co"># files &lt;- list.files(folder, full.names = T)</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co"># for (file in files) {</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co">#   new_file &lt;- sprintf(&#39;inst/extdata/%s&#39;,</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">#                       str_split_i(file, &#39;/&#39;, -1) %&gt;% str_replace(&#39;parquet&#39;, &#39;csv&#39;))</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co">#   df &lt;- read_parquet(file) %&gt;% slice(1:100)</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co">#   write_fun(&#39;csv&#39;)(df, new_file)</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># rm(file, df)</span></span></code></pre></div>
+<p>Lets consider a sample of the dataset of Nonfetal Vital Statistics
+(NVS), a public Colombian dataset that records all the deaths between
+1998 and 2022 of people born alive. This data is published by the
+Colombian National Administrative Department of Statistics (DANE by its
+spanish acronym) in its <a href="https://www.dane.gov.co/index.php/estadisticas-por-tema/salud/nacimientos-y-defunciones">website</a>,
+such that each year can be downloaded in traditional formats (sav, txt,
+csv, dta). The number of variables per year ranges from 48 to 69, while
+the number of rows can reach up to 363,089.</p>
+<p>For this vignette I sampled 100 rows for each year (each row records
+a death). Of course such small sample do not demand significant
+computational resources. However, in its original form, this dataset
+requires more than 2GB of storage, demand that is reduced to 123.8 MB by
+converting the files to parquet format. This efficiency gain can be
+easily replicated with the function <code>convert_files()</code>, as is
+shown in the next chunk of code.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Folder where is stored the data.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>folder <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&#39;extdata&#39;</span>, <span class="at">package =</span> <span class="st">&#39;dataRC&#39;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># The files to convert are all the ones that began with &quot;nofetal&quot;, have a four </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># digit year and ends with &quot;.xlsx&quot;.</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(folder, <span class="at">pattern =</span> <span class="st">&#39;^nofetal</span><span class="sc">\\</span><span class="st">d{4}</span><span class="sc">\\</span><span class="st">.csv$&#39;</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_files</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  folder,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  files, </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># I want to convert the files to parquet.</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">new_extension =</span> <span class="st">&#39;parquet&#39;</span>, </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># I want to store the parquet data in the same folder.</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">new_folder =</span> folder,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Do not display progress messages.</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> F)</span></code></pre></div>
+<p>As this data has been developed since the previous century, is no
+surprise that there have been many changes on how the data is stored.
+For instance, the table below shows that the number of variables per
+year has changes drastically across the years, and even for the years
+with same number of variables, the number of columns per datatype
+differ.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The new parquet files.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(folder, <span class="at">pattern =</span> <span class="st">&#39;^nofetal</span><span class="sc">\\</span><span class="st">d{4}</span><span class="sc">\\</span><span class="st">.parquet$&#39;</span>) </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the number of columns per year.</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>cols_per_year <span class="ot">&lt;-</span> <span class="fu">sapply</span>(files, <span class="cf">function</span>(file) arrow<span class="sc">::</span><span class="fu">open_dataset</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sprintf</span>(<span class="st">&#39;%s/%s&#39;</span>, folder, file)) <span class="sc">%&gt;%</span> ncol) <span class="sc">%&gt;%</span> unlist <span class="sc">%&gt;%</span> unname</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the number of columns per year and column classes.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>classes_per_year <span class="ot">&lt;-</span> <span class="fu">sapply</span>(files, <span class="cf">function</span>(x) arrow<span class="sc">::</span><span class="fu">read_parquet</span>(</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sprintf</span>(<span class="st">&#39;%s/%s&#39;</span>, folder, x)) <span class="sc">%&gt;%</span> <span class="fu">sapply</span>(class) <span class="sc">%&gt;%</span> table) </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>character_per_year <span class="ot">&lt;-</span> <span class="fu">sapply</span>(classes_per_year, </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                             <span class="cf">function</span>(x) {</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                               x <span class="ot">&lt;-</span> x[<span class="fu">names</span>(x) <span class="sc">==</span> <span class="st">&#39;character&#39;</span>]</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                               x <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span>, x, <span class="dv">0</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">return</span>(x)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                               }) <span class="sc">%&gt;%</span> unlist <span class="sc">%&gt;%</span> unname</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>integer_per_year <span class="ot">&lt;-</span> <span class="fu">sapply</span>(classes_per_year, </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>                           <span class="cf">function</span>(x) {</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                             x <span class="ot">&lt;-</span> x[<span class="fu">names</span>(x) <span class="sc">==</span> <span class="st">&#39;integer&#39;</span>]</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                             x <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span>, x, <span class="dv">0</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">return</span>(x)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>                             }) <span class="sc">%&gt;%</span> unlist <span class="sc">%&gt;%</span> unname</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>logical_per_year <span class="ot">&lt;-</span> <span class="fu">sapply</span>(classes_per_year, </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>                           <span class="cf">function</span>(x) {</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>                             x <span class="ot">&lt;-</span> x[<span class="fu">names</span>(x) <span class="sc">==</span> <span class="st">&#39;logical&#39;</span>]</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>                             x <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span>, x, <span class="dv">0</span>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">return</span>(x)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>                             }) <span class="sc">%&gt;%</span> unlist <span class="sc">%&gt;%</span> unname</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>numeric_per_year <span class="ot">&lt;-</span> <span class="fu">sapply</span>(classes_per_year, </span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>                           <span class="cf">function</span>(x) {</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>                             x <span class="ot">&lt;-</span> x[<span class="fu">names</span>(x) <span class="sc">==</span> <span class="st">&#39;numeric&#39;</span>]</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>                             x <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span>, x, <span class="dv">0</span>)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">return</span>(x)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>                             }) <span class="sc">%&gt;%</span> unlist <span class="sc">%&gt;%</span> unname</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">year =</span> <span class="dv">1998</span><span class="sc">:</span><span class="dv">2022</span>, <span class="at">n_vars=</span> cols_per_year, </span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>           <span class="at">character_vars =</span> character_per_year,</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>           <span class="at">integer_vars =</span> integer_per_year,</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>           <span class="at">logical_vars =</span> logical_per_year,</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>           <span class="at">numeric_vars =</span> numeric_per_year</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>           ) <span class="sc">%&gt;%</span> print</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    year n_vars character_vars integer_vars logical_vars numeric_vars</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  1998     48              2           36           10            0</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  1999     48              7           39            2            0</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  2000     48              2           36           10            0</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  2001     48              8           39            0            1</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  2002     48              7           40            1            0</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6  2003     48              7           39            1            1</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7  2004     48              8           39            0            1</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8  2005     48              8           39            0            1</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9  2006     48              7           39            1            1</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 2007     48              7           40            1            0</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 2008     68              7           54            7            0</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 2009     68             12           54            2            0</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13 2010     68             10           53            5            0</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14 2011     68             11           54            3            0</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15 2012     69             13           51            4            1</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16 2013     69             15           50            3            1</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 17 2014     68             11           54            3            0</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18 2015     68             13           50            5            0</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 19 2016     68             11           51            6            0</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 2017     68             13           39           16            0</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21 2018     68             12           48            8            0</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 22 2019     56              3           50            3            0</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 23 2020     55              3           46            6            0</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 24 2021     56              4           50            2            0</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 25 2022     57              4           40           13            0</span></span></code></pre></div>
+<p>Besides, the number of unique variable names for all years is 145,
+despite there whole majority of columns is common across years.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(files, <span class="cf">function</span>(file) arrow<span class="sc">::</span><span class="fu">open_dataset</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">&#39;%s/%s&#39;</span>, folder, file)) <span class="sc">%&gt;%</span> names) <span class="sc">%&gt;%</span> unlist <span class="sc">%&gt;%</span> unname <span class="sc">%&gt;%</span> unique <span class="sc">%&gt;%</span> length</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 145</span></span></code></pre></div>
+<p>These kind of problematic scenarios are suitable for the functions
+<code>create_partial_dictionary()</code> and
+<code>sort_partial_dictionary()</code>, which create a “partial”
+dictionary that ease the process of unify the data.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dict_path <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">&#39;%s/dict.xlsx&#39;</span>, folder)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(dict_path)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">create_partial_dictionary</span>(folder, files, dict_path, <span class="at">verbose =</span> F)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sort_partial_dictionary</span>(dict_path, <span class="at">overwrite =</span> T)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Save sorted dictionary in /private/var/folders/81/k3c_c4qs1ldcb8jbks6zcshw0000gn/T/RtmppjFUPr/temp_libpathe592ec1fdc5/dataRC/extdata/dict.xlsx.</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>dict <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(dict_path, <span class="at">sheet =</span> <span class="st">&#39;colname&#39;</span>) <span class="sc">%&gt;%</span> print</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 75 × 29</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    uniname   uniclass class_mode unique_classes   nofetal1998.parquet</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;     &lt;lgl&gt;    &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;              </span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 A_DEFUN   NA       integer    integer          a_defun            </span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 ANO       NA       integer    integer          ano                </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 AREA_RES  NA       integer    integer          area_res           </span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 ASIS_MED  NA       integer    integer          asis_med           </span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 C_BAS1    NA       character  character        c_bas1             </span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 C_MUERTE  NA       integer    integer; logical c_muerte           </span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 CAU_HOMOL NA       integer    integer          cau_homol          </span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 COD_DPTO  NA       integer    integer          cod_dpto           </span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 COD_MUNIC NA       integer    integer          cod_munic          </span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 CODMUNOC  NA       integer    logical; integer codmunoc           </span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 65 more rows</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 24 more variables: nofetal1999.parquet &lt;chr&gt;, nofetal2000.parquet &lt;chr&gt;,</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2001.parquet &lt;chr&gt;, nofetal2002.parquet &lt;chr&gt;,</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2003.parquet &lt;chr&gt;, nofetal2004.parquet &lt;chr&gt;,</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2005.parquet &lt;chr&gt;, nofetal2006.parquet &lt;chr&gt;,</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2007.parquet &lt;chr&gt;, nofetal2008.parquet &lt;chr&gt;,</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2009.parquet &lt;chr&gt;, nofetal2010.parquet &lt;chr&gt;, …</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(dict_path)</span></code></pre></div>
+<p>This could be done easily with the previous chunk of code, which
+writes a xlsx file with two sheets: <code>colnames</code> and
+<code>colclass</code>. Both sheets have one column per file, which in
+the former case have all the variable names of the file and in the
+latter have the datatype (class) per variable. Besides, the first column
+<code>uniname</code> is common for both sheets. Based on the variable
+names of all files, this column propose a name to group common variables
+across files. The common variables are determined if the names across
+files are equal ignoring upper and lower case. Of course this is a naive
+approach, so the user must review if the <code>uniname</code>s could be
+reduced more. For instance, lets imagine that we have three files that
+have a column with the month. In the first file this column is named as
+<code>month</code>, in the second file <code>MONTH</code> and in the
+latter <code>mes</code>. The associated partial dictionary will propose
+two different <code>uniname</code>s: <code>MONTH</code> and
+<code>MES</code>, however the user manually should combine this
+<code>uniname</code>s in one.</p>
+<p>By its part, based on the <code>colclass</code> sheet, the
+<code>colnames</code> sheet has three columns related to the class types
+of the variables per <code>uniname</code>. The first one is the
+<code>uniclass</code>, which should be manually filled by the user with
+the desired class for all the variables associated to each
+<code>uniname</code>. To fill this is usefull to look the columns
+<code>class_mode</code> and <code>unique_classes</code>. The former has
+the mode of the class (or modes in case of ties) and the latter have the
+unique classes across files. As shown latter, the <code>uniname</code>
+and <code>uniclass</code> columns will ease the processing of the
+data.</p>
+<p>For our sample of NVS we have the following partial dictionary. The
+dictionary is sorted by the <code>uniname</code> in descended order for
+number of matches, at the presence of ties, it is used the natural sort
+order. For instance, from the first row (<code>uniname</code> ==
+<code>A_DEFUN</code>) until the 37th (<code>uniname</code> ==
+<code>TIPO_EMB</code>), all the <code>uniname</code>s have a variable on
+each file so no manual work must be done. However,
+<code>IDADMISALUD</code> (2008-2011 and 2014-2022) and
+<code>IDADMISALU</code> (2012-2013) could be joined in one
+<code>uniname</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dict <span class="sc">%&gt;%</span> <span class="fu">filter</span>(uniname <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;IDADMISALUD&#39;</span>, <span class="st">&#39;IDADMISALU&#39;</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 29</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   uniname     uniclass class_mode unique_classes nofetal1998.parquet</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;       &lt;lgl&gt;    &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;              </span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 IDADMISALUD NA       integer    integer        &lt;NA&gt;               </span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 IDADMISALU  NA       integer    integer        &lt;NA&gt;               </span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 24 more variables: nofetal1999.parquet &lt;chr&gt;, nofetal2000.parquet &lt;chr&gt;,</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2001.parquet &lt;chr&gt;, nofetal2002.parquet &lt;chr&gt;,</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2003.parquet &lt;chr&gt;, nofetal2004.parquet &lt;chr&gt;,</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2005.parquet &lt;chr&gt;, nofetal2006.parquet &lt;chr&gt;,</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2007.parquet &lt;chr&gt;, nofetal2008.parquet &lt;chr&gt;,</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2009.parquet &lt;chr&gt;, nofetal2010.parquet &lt;chr&gt;,</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2011.parquet &lt;chr&gt;, nofetal2012.parquet &lt;chr&gt;, …</span></span></code></pre></div>
+<p>The unification could be done in three steps. First, determine in
+which <code>uniname</code> do you want to keep, in my case I prefer
+<code>IDADMISALUD</code> since have more elements and
+<code>IDADMISALU</code> has a spanish typo. Second, update the rows of
+the selected <code>uniname</code> with the rows of the discarded
+<code>uniname</code>. Finally, delete the discarded
+<code>uniname</code>. This could be easily done directly in Excel,
+however this code also satisfy our needs.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&#39;Before unification:&#39;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Before unification:&quot;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>dict <span class="sc">%&gt;%</span> <span class="fu">filter</span>(uniname <span class="sc">==</span> <span class="st">&#39;IDADMISALUD&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(nofetal2012.parquet, nofetal2013.parquet)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 2</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   nofetal2012.parquet nofetal2013.parquet</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;               &lt;chr&gt;              </span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 &lt;NA&gt;                &lt;NA&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>dict <span class="ot">&lt;-</span> dict <span class="sc">%&gt;%</span> </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Update the rows of `IDADMISALUD`.</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">nofetal2012.parquet =</span> dplyr<span class="sc">::</span><span class="fu">if_else</span>(</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>      uniname <span class="sc">==</span> <span class="st">&#39;IDADMISALUD&#39;</span>, <span class="st">&#39;IDADMISALU&#39;</span>, nofetal2012.parquet),</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">nofetal2013.parquet =</span> dplyr<span class="sc">::</span><span class="fu">if_else</span>(</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      uniname <span class="sc">==</span> <span class="st">&#39;IDADMISALUD&#39;</span>, <span class="st">&#39;IDADMISALU&#39;</span>, nofetal2013.parquet)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Delete `IDADMISALU`.</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(uniname <span class="sc">!=</span> <span class="st">&#39;IDADMISALU&#39;</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&#39;After unification:&#39;</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;After unification:&quot;</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>dict <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(uniname <span class="sc">==</span> <span class="st">&#39;IDADMISALUD&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(nofetal2012.parquet, nofetal2013.parquet)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 2</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   nofetal2012.parquet nofetal2013.parquet</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;               &lt;chr&gt;              </span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 IDADMISALU          IDADMISALU</span></span></code></pre></div>
+<p>The manual review of the <code>uniname</code>s and the
+<code>uniclass</code>es could be elaborated gradually as we need to use
+a variable. For instance, lets supposed that we are interested in answer
+whether women or men have a higher number of deaths in Colombia. For
+this we just need the year and sex variable. By looking our dictionary
+we notice that the <code>uninames</code> <code>ANO</code> and
+<code>SEXO</code> have a integer related variable in all files (despite
+the names are case sensitive different).</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dict <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(uniname <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;ANO&#39;</span>, <span class="st">&#39;SEXO&#39;</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 29</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   uniname uniclass class_mode unique_classes nofetal1998.parquet</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;lgl&gt;    &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;              </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 ANO     NA       integer    integer        ano                </span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 SEXO    NA       integer    integer        sexo               </span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 24 more variables: nofetal1999.parquet &lt;chr&gt;, nofetal2000.parquet &lt;chr&gt;,</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2001.parquet &lt;chr&gt;, nofetal2002.parquet &lt;chr&gt;,</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2003.parquet &lt;chr&gt;, nofetal2004.parquet &lt;chr&gt;,</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2005.parquet &lt;chr&gt;, nofetal2006.parquet &lt;chr&gt;,</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2007.parquet &lt;chr&gt;, nofetal2008.parquet &lt;chr&gt;,</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2009.parquet &lt;chr&gt;, nofetal2010.parquet &lt;chr&gt;,</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nofetal2011.parquet &lt;chr&gt;, nofetal2012.parquet &lt;chr&gt;, …</span></span></code></pre></div>
+<p>To achieve our objective we could employ the following code.
+Initially this could seem a bit overwhelming, however, the intuition is
+simple. You began by determining which columns you need in
+<code>SELECTED_COLUMNS &lt;- c(&#39;ANO&#39;, &#39;SEXO&#39;)</code>. Then for each
+file, keep only the desired columns, rename it to their
+<code>uniname</code>, compute the number of deaths per sex and save the
+results in <code>df</code>. Finally, calculate the proportion of deaths
+per sex on each year. Notice that the vast majority of the code is for
+go for each file and unify the names, so you just need to modify three
+things:</p>
+<ul>
+<li>Which columns you need in
+<code>SELECTED_COLUMNS &lt;- c(&#39;ANO&#39;, &#39;SEXO&#39;)</code>.</li>
+<li>The processing per file.</li>
+<li>The processing of the whole data.</li>
+</ul>
+<p>In the following chunk, this just represents four lines, the rest is
+the same for any scenario. In other words, this is a template!</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># BEGAN MODIFY:  Which columns you need?</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>SELECTED_COLUMNS <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;ANO&#39;</span>, <span class="st">&#39;SEXO&#39;</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> MODIFY. </span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (file <span class="cf">in</span> files) {</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Process partial dictionary (if you don&#39;t  understand don&#39;t worry this is</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># always like that so you could copy and paste freely).</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  df_selected <span class="ot">&lt;-</span> dict <span class="sc">%&gt;%</span> </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">filter</span>(uniname <span class="sc">%in%</span> SELECTED_COLUMNS) <span class="sc">%&gt;%</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(uniname, uniclass, <span class="fu">all_of</span>(file)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    tidyr<span class="sc">::</span><span class="fu">drop_na</span>(file) <span class="sc">%&gt;%</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    base<span class="sc">::</span><span class="fu">replace</span>(<span class="fu">is.na</span>(.), <span class="st">&#39;&#39;</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  original_colnames <span class="ot">&lt;-</span> df_selected[[file]]</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  new_colnames <span class="ot">&lt;-</span> df_selected<span class="sc">$</span>uniname</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Open file with lazy evaluation for speed (you could also use</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># `read_parquet()`).</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  df0 <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">open_dataset</span>(<span class="fu">sprintf</span>(<span class="st">&#39;%s/%s&#39;</span>, folder, file)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Select `SELECTED_COLUMNS` and rename it with the `uniname`.</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">all_of</span>(original_colnames)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">rename_at</span>(original_colnames, <span class="sc">~</span>new_colnames) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># BEGAN MODIFY: Process your data as required  with the `uniname`s.</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">group_by</span>(ANO, SEXO) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">n_ =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> ungroup <span class="sc">%&gt;%</span> </span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="re">END</span><span class="co"> MODIFY. </span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># End lazy evaluation. If you use `read_parquet() this is unnecesary.</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    collect</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Save the iteration results.</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># </span><span class="al">NOTE</span><span class="co">: # If all columns are going to have the same columns is recommended to </span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  <span class="co"># use `rbind()`.</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(df, df0)</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Using an external vector in selections was deprecated in tidyselect 1.1.0.</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Please use `all_of()` or `any_of()` instead.</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   # Was:</span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   data %&gt;% select(file)</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   # Now:</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   data %&gt;% select(all_of(file))</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; This warning is displayed once every 8 hours.</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; generated.</span></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a><span class="co"># MODIFY: Process your data as required.</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ANO) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">prop_ =</span> n_ <span class="sc">/</span> <span class="fu">sum</span>(n_))</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 50 × 4</span></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Groups:   ANO [25]</span></span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      ANO  SEXO    n_ prop_</span></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;</span></span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  1998     2    43  0.43</span></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  1998     1    57  0.57</span></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  1999     1    78  0.78</span></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  1999     2    22  0.22</span></span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2000     2    38  0.38</span></span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2000     1    62  0.62</span></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2001     1    78  0.78</span></span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2001     2    22  0.22</span></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2002     2    40  0.4 </span></span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2002     1    60  0.6 </span></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 40 more rows</span></span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> MODIFY. </span></span></code></pre></div>
+<p>But what if the per <code>uniname</code> the variable have different
+classes per file. Well, we need a small extra step. To see this lets
+artificially change the <code>ANO</code> integer class to a character
+for the 2022 file.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>path_file_2022 <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">&#39;%s/%s&#39;</span>, folder, files[stringr<span class="sc">::</span><span class="fu">str_detect</span>(files, <span class="st">&#39;2022&#39;</span>)])</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">read_parquet</span>(path_file_2022) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ANO =</span> <span class="fu">as.character</span>(ANO)) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_parquet</span>(path_file_2022)</span></code></pre></div>
+<p>Now, this is not a major problem, if we run the previous code we will
+obtain the same results, with the only difference that the
+<code>ANO</code> will be now a character. However, in many scenarios
+this could be problematic and inefficient. To solve this we need to make
+two changes to our current methodology. First, we manually must fill the
+<code>uniclass</code> column of our dictionary for the problematic
+variable (in this case <code>ANO</code> must be an integer). Again, this
+could be easily done in Excel but for our purposes we will use code.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dict <span class="ot">&lt;-</span> dict <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">uniclass =</span> <span class="fu">if_else</span>(uniname <span class="sc">==</span> <span class="st">&#39;ANO&#39;</span>, <span class="st">&#39;integer&#39;</span>, uniclass))</span></code></pre></div>
+<p>Then, we will add a few lines to our template so that for each file,
+the selected columns are force to have the data type of
+<code>uniclass</code>. The following code support: “integer”, “logical”,
+“numeric”, “character” and “date”. This makes our template larger, but
+does not add to us more work.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># BEGAN MODIFY:  Which columns you need?</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>SELECTED_COLUMNS <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;ANO&#39;</span>, <span class="st">&#39;SEXO&#39;</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> MODIFY. </span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (file <span class="cf">in</span> files) {</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Process partial dictionary (if you don&#39;t  understand don&#39;t worry this is</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># always like that so you could copy and paste freely).</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  df_selected <span class="ot">&lt;-</span> dict <span class="sc">%&gt;%</span> </span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">filter</span>(uniname <span class="sc">%in%</span> SELECTED_COLUMNS) <span class="sc">%&gt;%</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(uniname, uniclass, <span class="fu">all_of</span>(file)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    tidyr<span class="sc">::</span><span class="fu">drop_na</span>(file) <span class="sc">%&gt;%</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    base<span class="sc">::</span><span class="fu">replace</span>(<span class="fu">is.na</span>(.), <span class="st">&#39;&#39;</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  original_colnames <span class="ot">&lt;-</span> df_selected[[file]]</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  new_colnames <span class="ot">&lt;-</span> df_selected<span class="sc">$</span>uniname</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  new_classes <span class="ot">&lt;-</span> df_selected<span class="sc">$</span>uniclass <span class="sc">%&gt;%</span> tolower</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Open file with lazy evaluation for speed (you could also use</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># `read_parquet()`).</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  df0 <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">open_dataset</span>(<span class="fu">sprintf</span>(<span class="st">&#39;%s/%s&#39;</span>, folder, file)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Select `SELECTED_COLUMNS` and rename it with the `uniname`.</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">all_of</span>(original_colnames)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">rename_at</span>(original_colnames, <span class="sc">~</span>new_colnames) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Force the class.</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="al">NOTE</span><span class="co">: Lazy evaluation is picky, so if you have problematic values</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># (e.g. &quot;&quot; to numeric), you will need to filter those observations or collect.</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">across</span>(<span class="fu">all_of</span>(new_colnames[new_classes <span class="sc">==</span> <span class="st">&#39;numeric&#39;</span>]), as.numeric),</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">across</span>(<span class="fu">all_of</span>(new_colnames[new_classes <span class="sc">==</span> <span class="st">&#39;integer&#39;</span>]), as.integer),</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">across</span>(<span class="fu">all_of</span>(new_colnames[new_classes <span class="sc">==</span> <span class="st">&#39;chracter&#39;</span>]), as.character),</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>      <span class="fu">across</span>(<span class="fu">all_of</span>(new_colnames[new_classes <span class="sc">==</span> <span class="st">&#39;date&#39;</span>]), lubridate<span class="sc">::</span>ymd),</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">across</span>(<span class="fu">all_of</span>(new_colnames[new_classes <span class="sc">==</span> <span class="st">&#39;logical&#39;</span>]), as.logical)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># BEGAN MODIFY: Process your data as required  with the `uniname`s. </span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="al">NOTE</span><span class="co">:  Again lazy evaluation is picky and is still on develop to support</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># more functions. Therefore, some features cannot be done in it, such as</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># `dplyr::slice` or window functions. If this is the case you can collect</span></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># and do the processing normally, however this could consume a lot of time,</span></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># then you could  be creative and look for another way to achieve the</span></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># objective. Nevertheless, one option is to employ the function</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># `arrow::to_duckdb()`, which allow you to use more function without</span></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># increasing to much the time consumption.</span></span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">group_by</span>(ANO, SEXO) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">n_ =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> ungroup <span class="sc">%&gt;%</span> </span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="re">END</span><span class="co"> MODIFY. </span></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># End lazy evaluation. If you use `read_parquet() this is unnecesary.</span></span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>    collect</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Save the iteration results.</span></span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># </span><span class="al">NOTE</span><span class="co">: # If all columns are going to have the same columns is recommended to </span></span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>  <span class="co"># use `rbind()`.</span></span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(df, df0)</span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a><span class="co"># MODIFY: Process your data as required.</span></span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ANO) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">prop_ =</span> n_ <span class="sc">/</span> <span class="fu">sum</span>(n_))</span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 50 × 4</span></span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Groups:   ANO [25]</span></span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      ANO  SEXO    n_ prop_</span></span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;</span></span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  1998     2    43  0.43</span></span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  1998     1    57  0.57</span></span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  1999     1    78  0.78</span></span>
+<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  1999     2    22  0.22</span></span>
+<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2000     2    38  0.38</span></span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2000     1    62  0.62</span></span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2001     1    78  0.78</span></span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2001     2    22  0.22</span></span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2002     2    40  0.4 </span></span>
+<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2002     1    60  0.6 </span></span>
+<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 40 more rows</span></span>
+<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> MODIFY. </span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dict_path &lt;- sprintf(&#39;%s/dict_modified.xlsx&#39;, folder)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dict &lt;- readxl::read_excel(dict_path) %&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   dplyr::mutate(uniclass = tolower(uniclass))</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># files &lt;- names(dict)[-(1L:4L)]</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># SELECTED_COLUMNS &lt;- c(&#39;YEAR&#39;, &#39;ID&#39;, &#39;LOCATION&#39;)</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># df &lt;- NULL</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># tic()</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co"># for (file in files) {</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   sprintf(&#39;Began %s&#39;, file) %&gt;% cat</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#   tic()</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">#   df_selected &lt;- dplyr::filter(dict, uniname %in% SELECTED_COLUMNS) %&gt;%</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">#     dplyr::select(uniname, uniclass, all_of(file)) %&gt;%</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">#     tidyr::drop_na(file) %&gt;%</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">#     base::replace(is.na(.), &#39;&#39;)</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   original_colnames &lt;- df_selected[[file]]</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">#   new_colnames &lt;- df_selected$uniname</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">#   new_classes &lt;- df_selected$uniclass</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co">#   df0 &lt;- arrow::open_dataset(sprintf(&#39;%s/%s&#39;, folder, file)) %&gt;%</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co">#     dplyr::select(all_of(original_colnames)) %&gt;%</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="co">#     dplyr::rename_at(original_colnames, ~new_colnames) %&gt;%</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Lazy evaluation is picky, so if you have problematic values</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co">#     # (e.g. &quot;&quot; to numeric), you will need to filter those observations or collect.</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="co">#     dplyr::mutate(</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co">#       across(all_of(new_colnames[new_classes == &#39;numeric&#39;]), as.numeric),</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co">#       across(all_of(new_colnames[new_classes == &#39;integer&#39;]), as.integer),</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co">#       across(all_of(new_colnames[new_classes == &#39;date&#39;]), lubridate::ymd),</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="co">#       across(all_of(new_colnames[new_classes == &#39;logical&#39;]), as.logical)) %&gt;%</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Process data as required. Again lazy evaluation is picky and is still on</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="co">#     # develop to support more functions. Therefore, some features</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="co">#     # cannot be done in it, such as `dplyr::slice` or window functions. If this</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a><span class="co">#     # is the case you can collect and do the processing normally, however this</span></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="co">#     # could consume a lot of time, then you could  be creative and look for</span></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a><span class="co">#     # another way to achieve the objective. Nevertheless, one option is to</span></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a><span class="co">#     # employ the function `arrow::to_duckdb`, which allow you to use more</span></span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a><span class="co">#     # function without increasing the time consumption.</span></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a><span class="co">#     arrow::to_duckdb() %&gt;%</span></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a><span class="co">#     dplyr::slice_sample(n = 10) %&gt;%</span></span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a><span class="co">#     dplyr::group_by(ID) %&gt;%</span></span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a><span class="co">#     dplyr::mutate(aux = max(LOCATION, ID)) %&gt;% collect</span></span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a><span class="co">#   # If all columns are going to have the same columns is recommended to use</span></span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a><span class="co">#   #`rbind.`</span></span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a><span class="co">#   df &lt;- dplyr::bind_rows(df, df0)</span></span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a><span class="co">#   sprintf(&#39;\n\tCompleted in %f sec.\n&#39;, get_values_tic_msg()) %&gt;% cat</span></span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a><span class="co"># sprintf(&#39;\nThe process was completed in %f min.&#39;,</span></span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>        <span class="co"># get_values_tic_msg(unit = &#39;min&#39;)) %&gt;% cat</span></span></code></pre></div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
