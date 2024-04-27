@@ -1,14 +1,16 @@
-#' Function to read data for different file extensions.
+#' Wrapper function for reading data functions
 #'
-#' This function receives a file extension and returns the proper reading function.
+#' This function receives a file extension and returns the proper reading
+#' function.
 #'
-#' @param extension A character string specifying the file extension of the data file.
-#'                  Supported extensions: 'parquet', 'feather', 'dta', 'xlsx', 'csv', 'sas',
-#'                  'rds', 'rdata'.
-#' @param ... Additional arguments to be passed to the reading functions.
+#' @param extension A character string specifying the file extension of the data
+#'   file. Supported extensions: 'parquet', 'feather', 'dta', 'xlsx', 'csv',
+#'   'sas', 'rds', 'rdata'.
+#' @param ... Additional arguments to be passed to the reading functions
+#'   encapsulated in [dataRC::read_fun()].
 #'
-#' @return A function that can read data from the specified file format.
-#'         The returned function will accept the file path as its first argument.
+#' @return A function that can read data from the specified file format. The
+#'   returned function will accept the file path as its first argument.
 #'
 #' @importFrom arrow read_parquet read_feather
 #' @importFrom haven read_dta read_sas read_sav
@@ -70,23 +72,25 @@ read_fun <- function(extension, ...) {
   return(fun)
 }
 
-#' Function to write data for different file extensions.
+#'Wrapper function for writing data functions
 #'
-#' This function receives a file extension and returns the proper writing function.
+#'This function receives a file extension and returns the proper writing
+#'function.
 #'
-#' @param extension A character string specifying the file extension of the
-#' output file. Supported extensions: 'parquet', 'feather', 'dta', 'xlsx',
-#' 'csv', 'txt', 'sas', 'rds', 'rdata'.
-#' @param ... Additional arguments to be passed to the writing functions
-#' (write.csv, write.table, etc.).
-#' @return A function that can write data to the specified file format.
-#'         The returned function will accept the data object and the file path as arguments.
+#'@param extension A character string specifying the file extension of the
+#'  output file. Supported extensions: 'parquet', 'feather', 'dta', 'xlsx',
+#'  'csv', 'txt', 'sas', 'rds', 'rdata'.
+#'@param ... Additional arguments to be passed to the writing functions
+#'  (write.csv, write.table, etc.).
+#'@return A function that can write data to the specified file format. The
+#'  returned function will accept the data object and the file path as
+#'  arguments.
 #'
-#' @importFrom arrow write_parquet write_feather
-#' @importFrom haven write_dta write_sas
-#' @importFrom writexl write_xlsx
-#' @importFrom utils write.csv write.table
-#' @export
+#'@importFrom arrow write_parquet write_feather
+#'@importFrom haven write_dta write_sas
+#'@importFrom writexl write_xlsx
+#'@importFrom utils write.csv write.table
+#'@export
 #'
 #' @examples
 #' \dontrun{

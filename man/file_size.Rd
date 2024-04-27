@@ -2,11 +2,7 @@
 % Please edit documentation in R/00_size_of_files.R
 \name{file_size}
 \alias{file_size}
-\title{Get the size of individual files
-This function takes a vector of file paths and returns a data frame with the
-filename and size of each file. File sizes can be reported in different units
-(bytes, kilobytes, megabytes, gigabytes). A file will have a size of NA iff
-the file doesn't exists.}
+\title{Get the size of each file}
 \usage{
 file_size(file_paths, units = "bytes")
 }
@@ -19,7 +15,6 @@ file_size(file_paths, units = "bytes")
 A data frame with filename and size columns.
 }
 \description{
-Get the size of individual files
 This function takes a vector of file paths and returns a data frame with the
 filename and size of each file. File sizes can be reported in different units
 (bytes, kilobytes, megabytes, gigabytes). A file will have a size of NA iff

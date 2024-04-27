@@ -2,7 +2,7 @@
 % Please edit documentation in R/01_delete_files.R
 \name{delete_stata_temps}
 \alias{delete_stata_temps}
-\title{Delete Stata Temporary Files}
+\title{Delete Stata temporary files}
 \usage{
 delete_stata_temps()
 }
@@ -10,9 +10,9 @@ delete_stata_temps()
 None
 }
 \description{
-The function identifies Stata temporary files based on their naming convention.
-It then deletes the identified files and prints the number of files deleted
-along with the cleared disk space.
+The function identifies Stata temporary files based on their naming
+convention. It then deletes the identified files and prints the number of
+files deleted along with the cleared disk space.
 }
 \examples{
 \dontrun{
@@ -20,5 +20,6 @@ delete_stata_temps()
 }
 }
 \seealso{
-[Stata temporary files FAQ](https://www.stata.com/statalist/archive/2004-01/msg00542.html)
+[Stata temporary files
+  FAQ](https://www.stata.com/statalist/archive/2004-01/msg00542.html)
 }

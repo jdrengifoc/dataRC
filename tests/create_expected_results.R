@@ -8,12 +8,14 @@
 #              unit = units)
 #   )
 # }
-# usethis::use_data(df_test_file_size, internal = T, overwrite = T)
+# usethis::use_data(df_test_file_size, internal = T, overwrite = T) asdasdasdasdasda
 
 
 devtools::load_all()
 devtools::test()
 devtools::check()
+
+devtools::document()
 
 
 

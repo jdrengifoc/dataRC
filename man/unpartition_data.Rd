@@ -15,8 +15,9 @@ unpartition_data(partition_folder, new_file)
 None
 }
 \description{
-This function combines data from multiple partition files into a single file
-of the desired extension.
+ADD VERBOSE.
+This function combines data the partition files created by
+[dataRC::partition_data()] into a single file of the desired extension type.
 }
 \examples{
 \dontrun{

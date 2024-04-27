@@ -2,7 +2,7 @@
 % Please edit documentation in R/03_partial_dictionary.R
 \name{create_partial_dictionary}
 \alias{create_partial_dictionary}
-\title{Create Partial Dictionary.}
+\title{Write an Excel file containing the names and classes of each file}
 \usage{
 create_partial_dictionary(
   folder,
@@ -35,10 +35,10 @@ progress messages.}
 None. The function saves the partial dictionary as an Excel file.
 }
 \description{
-This function creates a partial dictionary to ease the unification of
-databases that have common information but may have heterogeneity across
-files. For instance, some databases could have more or less variable or the
-name and data type may change across files.
+Why is separated from sort? This function creates a partial dictionary to
+ease the unification of databases that have common information but may have
+heterogeneity across files. For instance, some databases could have more or
+less variable or the name and data type may change across files.
 }
 \details{
 This function extracts the column names and classes (data types)

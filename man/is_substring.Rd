@@ -2,7 +2,7 @@
 % Please edit documentation in R/05_general_purpose.R
 \name{is_substring}
 \alias{is_substring}
-\title{Check if String is Substring of Another}
+\title{Check if a String is a Substring}
 \usage{
 is_substring(str1, str2)
 }
@@ -15,7 +15,7 @@ is_substring(str1, str2)
 TRUE if str1 is a substring of str2, otherwise FALSE.
 }
 \description{
-This function checks if one string is a substring of another.
+This function checks if a string is a substring of another.
 }
 \examples{
 is_substring("abc", "abcdef") # TRUE

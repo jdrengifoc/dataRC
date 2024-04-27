@@ -24,16 +24,17 @@ partition_data(
 None
 }
 \description{
-This function partitions a parquet file into multiple partitions based on
-the specified maximum partition size.
+Why do not do it for more functions? ADD VERBOSE
+This function partitions a parquet file into multiple partitions based on the
+specified maximum partition size.
 }
 \note{
 In the urge enhance the performance, the size of each partition is
-forecast by assuming homogeneous memory demand along the original file.
-However this may be unrealistic, thus, the `max_partition_size` do not
-guarantee that the partition with the largest size have at most this size.
-The above is specially true for small files/partitions, since the memory
-gains due to the use of parquet becomes weaker.
+  forecast by assuming homogeneous storage demand along the original file.
+  However this may be unrealistic, thus, the `max_partition_size` do not
+  guarantee that the partition with the largest size have at most this size.
+  The above is specially true for small files/partitions, since the memory
+  gains due to the use of parquet becomes weaker.
 }
 \examples{
 \dontrun{

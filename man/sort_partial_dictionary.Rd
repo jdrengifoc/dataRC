@@ -2,7 +2,7 @@
 % Please edit documentation in R/03_partial_dictionary.R
 \name{sort_partial_dictionary}
 \alias{sort_partial_dictionary}
-\title{Sort Partial Dictionaries}
+\title{Organize partial dictionary and creates useful columns}
 \usage{
 sort_partial_dictionary(old_dict_path, new_dict_path = NULL, overwrite = F)
 }
@@ -30,8 +30,8 @@ dictionary is saved into a xlsx file.
 \details{
 The dictionary will have unique name (`uniname`) across files, the
   most common classes and the unique classes per `uniname`. After this, the
-  user manually must fill the `uniclass` column in order to guarantee a robust
-  data process (see
+  user manually must fill the `uniclass` column in order to guarantee a
+  robust data process (see
   `vignette('vignettes/process_data_with_partial_dict.Rmd')` for a full
   example).
 }

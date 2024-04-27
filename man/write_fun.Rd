@@ -2,7 +2,7 @@
 % Please edit documentation in R/02_convert_files.R
 \name{write_fun}
 \alias{write_fun}
-\title{Function to write data for different file extensions.}
+\title{Wrapper function for writing data functions}
 \usage{
 write_fun(extension, ...)
 }
@@ -15,11 +15,13 @@ output file. Supported extensions: 'parquet', 'feather', 'dta', 'xlsx',
 (write.csv, write.table, etc.).}
 }
 \value{
-A function that can write data to the specified file format.
-        The returned function will accept the data object and the file path as arguments.
+A function that can write data to the specified file format. The
+ returned function will accept the data object and the file path as
+ arguments.
 }
 \description{
-This function receives a file extension and returns the proper writing function.
+This function receives a file extension and returns the proper writing
+function.
 }
 \examples{
 \dontrun{

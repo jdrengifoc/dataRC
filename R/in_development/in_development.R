@@ -1,12 +1,15 @@
 ### IDEAS
-#' Update dicts.
-#' Edit uniname function.
-#' Merge uninames:
+#' UPDATE DICTS..
+#' EDIT UNINAME FUNCTION.
+#' MERGE UNINAME
 #' discarded_uniname <- dict %>%
 #' filter(uniname == 'IDADMISALU') %>%
 #' select(-uniname, -uniclass, -class_mode, -unique_classes) %>%
 #' select(where(~all(!is.na(.))))
-
+#' SMART PARTITION
+#' If the last partition is very small append to the previous partition.
+#' SMART UNPARTITION
+#' usar open_dataset con una particion falsa.
 
 
 

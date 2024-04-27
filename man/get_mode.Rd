@@ -2,7 +2,7 @@
 % Please edit documentation in R/05_general_purpose.R
 \name{get_mode}
 \alias{get_mode}
-\title{Calculate Mode of a Vector}
+\title{Calculate the mode of a vector}
 \usage{
 get_mode(values, na.rm = T)
 }

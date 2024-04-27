@@ -16,8 +16,8 @@ The total size of all files combined.
 }
 \description{
 This function takes a vector of file paths and returns the total size of all
-files combined. File sizes can be reported in different units
-(bytes, kilobytes, megabytes, gigabytes).
+files combined. File sizes can be reported in different units (bytes,
+kilobytes, megabytes, gigabytes).
 }
 \examples{
 \dontrun{

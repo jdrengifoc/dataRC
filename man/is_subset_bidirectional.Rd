@@ -2,7 +2,7 @@
 % Please edit documentation in R/05_general_purpose.R
 \name{is_subset_bidirectional}
 \alias{is_subset_bidirectional}
-\title{Check if strings are subsets of each other.}
+\title{Check if Strings are subsets of each other.}
 \usage{
 is_subset_bidirectional(str1, str2)
 }

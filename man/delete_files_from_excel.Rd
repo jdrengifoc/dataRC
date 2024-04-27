@@ -2,7 +2,7 @@
 % Please edit documentation in R/01_delete_files.R
 \name{delete_files_from_excel}
 \alias{delete_files_from_excel}
-\title{Delete files based on an Excel file}
+\title{Delete files specified in an Excel file}
 \usage{
 delete_files_from_excel(file_path, save = 0, verbose = T)
 }
@@ -22,11 +22,11 @@ Based on an excel file, this function deletes all the files oriented by the
 user.
 }
 \details{
-This function should be used with `dataR::folder_details()`, which generates
-an Excel file with detailed information for each file of a folder. After
-this, the user must manually modify the "delete" column in such way, that
-the files that are expected to be deleted must have any value different to the
-`save` value (by default 0).
+This function should be used with [dataRC::folder_details()], which
+  generates an Excel file with detailed information for each file of a
+  folder. After this, the user must manually modify the "delete" column in
+  such way, that the files that are expected to be deleted must have any
+  value different to the `save` value (by default 0).
 }
 \examples{
 \dontrun{

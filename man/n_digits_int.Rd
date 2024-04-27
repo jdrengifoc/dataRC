@@ -2,7 +2,7 @@
 % Please edit documentation in R/05_general_purpose.R
 \name{n_digits_int}
 \alias{n_digits_int}
-\title{Count number of digits in an integer}
+\title{Count the number of digits in an integer}
 \usage{
 n_digits_int(x)
 }

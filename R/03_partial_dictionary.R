@@ -1,6 +1,7 @@
-#' Pad Vector with NA Values
+#' Append NA values to a vector to reach a target length
 #'
-#' This function pads a vector with NA values to achieve a specified target length.
+#' This function pads a vector with NA values to achieve a specified target
+#' length.
 #'
 #' @param vec The input vector to be padded.
 #' @param target_length The desired length of the padded vector.
@@ -18,12 +19,12 @@ pad_with_nas <- function(vec, target_length) {
   vec <- c(vec, rep(NA, max(0, target_length - n_vec)))
   return(vec)
 }
-#' Create Partial Dictionary.
+#' Write an Excel file containing the names and classes of each file
 #'
-#' This function creates a partial dictionary to ease the unification of
-#' databases that have common information but may have heterogeneity across
-#' files. For instance, some databases could have more or less variable or the
-#' name and data type may change across files.
+#' Why is separated from sort? This function creates a partial dictionary to
+#' ease the unification of databases that have common information but may have
+#' heterogeneity across files. For instance, some databases could have more or
+#' less variable or the name and data type may change across files.
 #' @param folder A character with the root folder where is stored the data.
 #' @param files A character vector of file paths (from the `folder`)from which
 #'   to extract column names and classes.
@@ -106,7 +107,7 @@ create_partial_dictionary <- function(folder, files, dict_path,
   openxlsx::saveWorkbook(OUT, dict_path, overwrite = overwrite)
 }
 
-#' Sort Partial Dictionaries
+#' Organize partial dictionary and creates useful columns
 #'
 #' This function sorts a partial dictionary  used for identifying and unifying
 #' the data column names and classes across files. It reads the original
@@ -126,8 +127,8 @@ create_partial_dictionary <- function(folder, files, dict_path,
 #'
 #' @details The dictionary will have unique name (`uniname`) across files, the
 #'   most common classes and the unique classes per `uniname`. After this, the
-#'   user manually must fill the `uniclass` column in order to guarantee a robust
-#'   data process (see
+#'   user manually must fill the `uniclass` column in order to guarantee a
+#'   robust data process (see
 #'   `vignette('vignettes/process_data_with_partial_dict.Rmd')` for a full
 #'   example).
 #'
@@ -219,48 +220,4 @@ sort_partial_dictionary <- function(old_dict_path,
   openxlsx::saveWorkbook(OUT,  new_dict_path, overwrite = overwrite)
 
   message(sprintf("\nSave sorted dictionary in %s.\n", new_dict_path))
-}
-
-#' Get Columns with Same Names
-#'
-#' This function reads column names from an Excel file and identifies columns
-#' with the same names. It returns a list where each element represents a unique
-#' column name, and the corresponding value is a vector of column names that are
-#' identical to it.
-#'
-#' @param input_file Path to the Excel file containing column names.
-#' @param sheet_name Name of the sheet in the Excel file containing the column
-#'   names (default is 'colname').
-#'
-#' @return A list where each element represents a unique column name, and the
-#'   corresponding value is a vector of column names that are identical to it.
-#'
-#' @examples
-#' \dontrun{
-#' # Get columns with the same names from an Excel file
-#' get_columns_with_same_names(input_file = "column_names.xlsx", sheet_name = "colname")
-#' }
-#'
-#' @importFrom readxl read_excel
-#' @export
-get_columns_with_same_names <- function(input_file, sheet_name = 'colname') {
-  df_colnames <- read_excel(input_file, sheet = sheet_name)
-  df_colnames1 <- data.frame(t(df_colnames %>% select(-'uniname'))) %>% distinct() %>% t()
-  df_colnames1 <- data.frame(df_colnames1)
-
-  n_not_nans <- apply(df_colnames, 2, function(x) sum(!is.na(x)))
-  list_equal_names <- list()
-  for (col_name1 in names(df_colnames1)) {
-    bool_matrix <- df_colnames == df_colnames1[[col_name1]]
-    selected_columns <- names(n_not_nans[n_not_nans == n_not_nans[col_name1]])
-    bool_matrix <- bool_matrix[, colnames(bool_matrix) %in% selected_columns]
-    if (is.null(dim(bool_matrix))) {
-      list_equal_names[[col_name1]] <- col_name1
-      next
-    }
-    equal_columns <- apply(bool_matrix, 2, function(x) all(x, na.rm = T))
-    list_equal_names[[col_name1]] <- names(equal_columns[equal_columns])
-  }
-  names(list_equal_names) <- names(df_colnames1)
-  return(list_equal_names)
 }

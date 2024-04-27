@@ -1,8 +1,8 @@
-#' Delete Stata Temporary Files
+#' Delete Stata temporary files
 #'
-#' The function identifies Stata temporary files based on their naming convention.
-#' It then deletes the identified files and prints the number of files deleted
-#' along with the cleared disk space.
+#' The function identifies Stata temporary files based on their naming
+#' convention. It then deletes the identified files and prints the number of
+#' files deleted along with the cleared disk space.
 #' @return None
 #' @importFrom stringr str_split_1
 #' @export
@@ -11,7 +11,8 @@
 #' \dontrun{
 #' delete_stata_temps()
 #' }
-#' @seealso [Stata temporary files FAQ](https://www.stata.com/statalist/archive/2004-01/msg00542.html)
+#' @seealso [Stata temporary files
+#'   FAQ](https://www.stata.com/statalist/archive/2004-01/msg00542.html)
 delete_stata_temps <- function() {
   # Get the temporary folder
   temp_folder <- paste(
@@ -30,7 +31,7 @@ delete_stata_temps <- function() {
     paste('Deleted', length(temps), 'files clearing', deleted_size, 'GB!\n')
     )
 }
-#' Create a table with information of all the files from a folder
+#' Create a table with information of all the files inside a list of folders
 #'
 #' This function takes a vector of folder paths, retrieves details about files
 #' in those folders, and writes the information to an Excel file. The details
@@ -43,8 +44,8 @@ delete_stata_temps <- function() {
 #' @param verbose If TRUE (default), displays a message to the user.
 #' @return None
 #' @details Eases the cleaning of folder by creating an excel with the details
-#' about each file. Once created the user must change/delete the zeros in the
-#' delete column for the files that must be deleted.
+#'   about each file. Once created the user must change/delete the zeros in the
+#'   delete column for the files that must be deleted.
 #'
 #' @importFrom dplyr tibble filter arrange mutate
 #' @importFrom magrittr %>%
@@ -90,21 +91,21 @@ folder_details <- function(folders, file_path = NULL, units = 'bytes',
   }
 }
 
-#' Delete files based on an Excel file
+#' Delete files specified in an Excel file
 #'
 #' Based on an excel file, this function deletes all the files oriented by the
 #' user.
 #'
 #' @param file_path The path to the Excel file containing file details.
 #' @param save The value in the delete column that avoid the deletion of the
-#' file. The default value is 0.
+#'   file. The default value is 0.
 #' @param verbose If TRUE (default), displays a message to the user.
 #' @return None
-#' @details This function should be used with `dataR::folder_details()`, which generates
-#' an Excel file with detailed information for each file of a folder. After
-#' this, the user must manually modify the "delete" column in such way, that
-#' the files that are expected to be deleted must have any value different to the
-#' `save` value (by default 0).
+#' @details This function should be used with [dataRC::folder_details()], which
+#'   generates an Excel file with detailed information for each file of a
+#'   folder. After this, the user must manually modify the "delete" column in
+#'   such way, that the files that are expected to be deleted must have any
+#'   value different to the `save` value (by default 0).
 #'
 #' @importFrom readxl read_excel
 #' @importFrom dplyr filter mutate

@@ -2,7 +2,7 @@
 % Please edit documentation in R/05_general_purpose.R
 \name{get_next_consecutives}
 \alias{get_next_consecutives}
-\title{Get Next Consecutive Numbers}
+\title{Find Consecutive Numbers in a Vector}
 \usage{
 get_next_consecutives(prev, post)
 }
@@ -12,11 +12,12 @@ get_next_consecutives(prev, post)
 \item{post}{A vector of positive integers representing subsequent numbers.}
 }
 \value{
-A vector containing the next consecutive numbers in 'post' after each element in 'prev'.
+A vector containing the next consecutive numbers in 'post' after each
+  element in 'prev'.
 }
 \description{
-Given two vectors of integers, this function finds the next consecutive number
-in the second vector after each element in the first vector.
+Given two vectors of integers, this function finds the next consecutive
+number in the second vector for each element in the first vector.
 }
 \examples{
 \dontrun{

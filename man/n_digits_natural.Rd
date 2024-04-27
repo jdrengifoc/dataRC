@@ -2,7 +2,7 @@
 % Please edit documentation in R/05_general_purpose.R
 \name{n_digits_natural}
 \alias{n_digits_natural}
-\title{Count number of digits of  a natural number}
+\title{Count number of digits in a natural number}
 \usage{
 n_digits_natural(x)
 }

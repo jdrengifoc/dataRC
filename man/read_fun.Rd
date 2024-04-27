@@ -2,23 +2,25 @@
 % Please edit documentation in R/02_convert_files.R
 \name{read_fun}
 \alias{read_fun}
-\title{Function to read data for different file extensions.}
+\title{Wrapper function for reading data functions}
 \usage{
 read_fun(extension, ...)
 }
 \arguments{
-\item{extension}{A character string specifying the file extension of the data file.
-Supported extensions: 'parquet', 'feather', 'dta', 'xlsx', 'csv', 'sas',
-'rds', 'rdata'.}
+\item{extension}{A character string specifying the file extension of the data
+file. Supported extensions: 'parquet', 'feather', 'dta', 'xlsx', 'csv',
+'sas', 'rds', 'rdata'.}
 
-\item{...}{Additional arguments to be passed to the reading functions.}
+\item{...}{Additional arguments to be passed to the reading functions
+encapsulated in [dataRC::read_fun()].}
 }
 \value{
-A function that can read data from the specified file format.
-        The returned function will accept the file path as its first argument.
+A function that can read data from the specified file format. The
+  returned function will accept the file path as its first argument.
 }
 \description{
-This function receives a file extension and returns the proper reading function.
+This function receives a file extension and returns the proper reading
+function.
 }
 \examples{
 \dontrun{

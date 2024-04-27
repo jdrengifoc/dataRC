@@ -13,7 +13,7 @@ stata_month2ymd(stata_month)
 A vector of year-months in POSIXct format.
 }
 \description{
-Convert Stata month number to date.
+Convert numeric Stata months to date format.
 }
 \note{
 Stata counts the months since January of 1960.

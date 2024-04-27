@@ -2,7 +2,7 @@
 % Please edit documentation in R/01_delete_files.R
 \name{folder_details}
 \alias{folder_details}
-\title{Create a table with information of all the files from a folder}
+\title{Create a table with information of all the files inside a list of folders}
 \usage{
 folder_details(folders, file_path = NULL, units = "bytes", verbose = TRUE)
 }
@@ -26,8 +26,8 @@ the folder where it is stored, and add a column for potential deletion.
 }
 \details{
 Eases the cleaning of folder by creating an excel with the details
-about each file. Once created the user must change/delete the zeros in the
-delete column for the files that must be deleted.
+  about each file. Once created the user must change/delete the zeros in the
+  delete column for the files that must be deleted.
 }
 \examples{
 \dontrun{

@@ -1,8 +1,8 @@
 #' Get the total size of multiple files.
 #'
 #' This function takes a vector of file paths and returns the total size of all
-#' files combined. File sizes can be reported in different units
-#' (bytes, kilobytes, megabytes, gigabytes).
+#' files combined. File sizes can be reported in different units (bytes,
+#' kilobytes, megabytes, gigabytes).
 #'
 #' @param file_paths A vector of file paths.
 #' @param units The desired units for file sizes ('bytes', 'kb', 'mb', or 'gb').
@@ -26,7 +26,8 @@ files_size <- function(file_paths, units = 'bytes'){
   return(size / unit_coefficients[[units]])
 }
 
-#' Get the size of individual files
+#' Get the size of each file
+#'
 #' This function takes a vector of file paths and returns a data frame with the
 #' filename and size of each file. File sizes can be reported in different units
 #' (bytes, kilobytes, megabytes, gigabytes). A file will have a size of NA iff

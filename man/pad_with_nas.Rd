@@ -2,7 +2,7 @@
 % Please edit documentation in R/03_partial_dictionary.R
 \name{pad_with_nas}
 \alias{pad_with_nas}
-\title{Pad Vector with NA Values}
+\title{Append NA values to a vector to reach a target length}
 \usage{
 pad_with_nas(vec, target_length)
 }
@@ -15,7 +15,8 @@ pad_with_nas(vec, target_length)
 A vector padded with NA values to reach the target length.
 }
 \description{
-This function pads a vector with NA values to achieve a specified target length.
+This function pads a vector with NA values to achieve a specified target
+length.
 }
 \examples{
 # Pad a vector with NA values to reach a target length of 10
