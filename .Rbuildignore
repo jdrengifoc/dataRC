@@ -1,0 +1,10 @@
+^renv$
+^renv\.lock$
+^.*\.Rproj$
+^\.Rproj\.user$
+^development$
+^examples$
+^tests/create_expected_results.R$
+^R/deprecated
+^R/in_development
+

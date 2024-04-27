@@ -1,0 +1,328 @@
+---
+title: "process_data_with_partial_dict"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{process_data_with_partial_dict}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dataRC)
+library(testthat)
+
+library(arrow)
+library(dplyr)
+library(stringr)
+
+# NVS data.
+# library(dplyr)
+# library(arrow)
+# library(stringr)
+# folder <- '../../_Data/DANE_EEVV_anominizadas/Nofetales'
+# files <- list.files(folder, full.names = T)
+# for (file in files) {
+#   new_file <- sprintf('inst/extdata/%s',
+#                       str_split_i(file, '/', -1) %>% str_replace('parquet', 'csv'))
+#   df <- read_parquet(file) %>% slice(1:100)
+#   write_fun('csv')(df, new_file)
+# }
+# rm(file, df)
+```
+Lets consider a sample of the dataset of Nonfetal Vital Statistics (NVS), a  public Colombian dataset that records all the deaths between 1998 and 2022 of people born alive. This data is published by the Colombian National Administrative Department of Statistics (DANE by its spanish acronym) in its [website](https://www.dane.gov.co/index.php/estadisticas-por-tema/salud/nacimientos-y-defunciones), such that each year can be downloaded in traditional formats (sav, txt, csv, dta). The number of variables per year ranges from 48 to 69, while the number of rows can reach up to 363,089. 
+
+For this vignette I sampled 100 rows for each year (each row records a death). Of course such small sample do not demand significant computational resources. However, in its original form, this dataset requires more than 2GB of storage, demand that is reduced to 123.8 MB by converting the files to parquet format. This efficiency gain can be easily replicated with the function `convert_files()`, as is shown in the next chunk of code.
+
+```{r}
+# Folder where is stored the data.
+folder <- system.file('extdata', package = 'dataRC')
+# The files to convert are all the ones that began with "nofetal", have a four 
+# digit year and ends with ".xlsx".
+files <- list.files(folder, pattern = '^nofetal\\d{4}\\.csv$')
+convert_files(
+  folder,
+  files, 
+  # I want to convert the files to parquet.
+  new_extension = 'parquet', 
+  # I want to store the parquet data in the same folder.
+  new_folder = folder,
+  # Do not display progress messages.
+  verbose = F)
+```
+As this data has been developed since the previous century, is no surprise that there have been many changes on how the data is stored. For instance, the table below shows that the number of variables per year has changes drastically across the years, and even for the years with same number of variables, the number of columns per datatype differ.
+```{r}
+# The new parquet files.
+files <- list.files(folder, pattern = '^nofetal\\d{4}\\.parquet$') 
+
+# Get the number of columns per year.
+cols_per_year <- sapply(files, function(file) arrow::open_dataset(
+  sprintf('%s/%s', folder, file)) %>% ncol) %>% unlist %>% unname
+# Get the number of columns per year and column classes.
+classes_per_year <- sapply(files, function(x) arrow::read_parquet(
+  sprintf('%s/%s', folder, x)) %>% sapply(class) %>% table) 
+character_per_year <- sapply(classes_per_year, 
+                             function(x) {
+                               x <- x[names(x) == 'character']
+                               x <- ifelse(length(x) > 0, x, 0)
+                               return(x)
+                               }) %>% unlist %>% unname
+integer_per_year <- sapply(classes_per_year, 
+                           function(x) {
+                             x <- x[names(x) == 'integer']
+                             x <- ifelse(length(x) > 0, x, 0)
+                             return(x)
+                             }) %>% unlist %>% unname
+logical_per_year <- sapply(classes_per_year, 
+                           function(x) {
+                             x <- x[names(x) == 'logical']
+                             x <- ifelse(length(x) > 0, x, 0)
+                             return(x)
+                             }) %>% unlist %>% unname
+numeric_per_year <- sapply(classes_per_year, 
+                           function(x) {
+                             x <- x[names(x) == 'numeric']
+                             x <- ifelse(length(x) > 0, x, 0)
+                             return(x)
+                             }) %>% unlist %>% unname
+
+data.frame(year = 1998:2022, n_vars= cols_per_year, 
+           character_vars = character_per_year,
+           integer_vars = integer_per_year,
+           logical_vars = logical_per_year,
+           numeric_vars = numeric_per_year
+           ) %>% print
+```
+Besides, the number of unique variable names for all years is 145, despite there whole majority of columns is common across years.
+```{r}
+sapply(files, function(file) arrow::open_dataset(
+    sprintf('%s/%s', folder, file)) %>% names) %>% unlist %>% unname %>% unique %>% length
+```
+These kind of problematic scenarios are suitable for the functions `create_partial_dictionary()` and `sort_partial_dictionary()`, which create a "partial" dictionary that ease the process of unify the data.
+```{r}
+dict_path <- sprintf('%s/dict.xlsx', folder)
+unlink(dict_path)
+create_partial_dictionary(folder, files, dict_path, verbose = F)
+sort_partial_dictionary(dict_path, overwrite = T)
+
+dict <- readxl::read_excel(dict_path, sheet = 'colname') %>% print
+unlink(dict_path)
+```
+This could be done easily with the previous chunk of code, which writes a xlsx file with two sheets: `colnames` and `colclass`. Both sheets have one column per file, which in the former case have all the variable names of the file and in the latter have the datatype (class) per variable. Besides, the first column `uniname` is common for both sheets. Based on the variable names of all files, this column propose a name to group common variables across files. The common variables are determined if the names across files are equal ignoring upper and lower case. Of course this is a naive approach, so the user must review if the `uniname`s could be reduced more. For instance, lets imagine that we have three files that have a column with the month. In the first file this column is named as `month`, in the second file `MONTH` and in the latter `mes`. The associated partial dictionary will propose two different `uniname`s: `MONTH` and `MES`, however the user manually should combine this `uniname`s in one.
+
+By its part, based on the `colclass` sheet, the `colnames` sheet has three columns related to the class types of the variables per `uniname`. The first one is the `uniclass`, which should be manually filled by the user with the desired class for all the variables associated to each `uniname`. To fill this is usefull to look the columns `class_mode` and `unique_classes`. The former has the mode of the class (or modes in case of ties) and the latter have the unique classes across files. As shown latter, the `uniname` and `uniclass` columns will ease the processing of the data.
+
+For our sample of NVS we have the following partial dictionary. The dictionary is sorted by the `uniname` in descended order for number of matches, at the presence of ties, it is used the natural sort order. For instance, from the first row (`uniname` == `A_DEFUN`) until the 37th (`uniname` == `TIPO_EMB`), all the `uniname`s have a variable on each file so no manual work must be done. However, `IDADMISALUD` (2008-2011 and 2014-2022)  and `IDADMISALU` (2012-2013) could be joined in one `uniname`.
+```{r}
+dict %>% filter(uniname %in% c('IDADMISALUD', 'IDADMISALU'))
+```
+The unification could be done in three steps. First, determine in which `uniname` do you want to keep, in my case I prefer `IDADMISALUD` since have more elements and `IDADMISALU` has a spanish typo. Second, update the rows of the selected `uniname` with the rows of the discarded `uniname`. Finally, delete the discarded `uniname`. This could be easily done directly in Excel, however this code also satisfy our needs.
+```{r}
+print('Before unification:')
+dict %>% filter(uniname == 'IDADMISALUD') %>% 
+  select(nofetal2012.parquet, nofetal2013.parquet)
+
+dict <- dict %>% 
+  # Update the rows of `IDADMISALUD`.
+  dplyr::mutate(
+    nofetal2012.parquet = dplyr::if_else(
+      uniname == 'IDADMISALUD', 'IDADMISALU', nofetal2012.parquet),
+    nofetal2013.parquet = dplyr::if_else(
+      uniname == 'IDADMISALUD', 'IDADMISALU', nofetal2013.parquet)) %>% 
+  # Delete `IDADMISALU`.
+  dplyr::filter(uniname != 'IDADMISALU')
+
+print('After unification:')
+dict %>% dplyr::filter(uniname == 'IDADMISALUD') %>% 
+  dplyr::select(nofetal2012.parquet, nofetal2013.parquet)
+
+```
+
+The manual review of the `uniname`s and the `uniclass`es could be elaborated gradually as we need to use a variable. For instance, lets supposed that we are interested in answer whether women or men have a higher number of deaths in Colombia. For this we just need the year and sex variable. By looking our dictionary we notice that the `uninames` `ANO` and `SEXO` have a integer related variable in all files (despite the names are case sensitive different).
+```{r}
+dict %>% dplyr::filter(uniname %in% c('ANO', 'SEXO'))
+```
+To achieve our objective we could employ the following code. Initially this could seem a bit overwhelming, however, the intuition is simple. You began by determining which columns you need in `SELECTED_COLUMNS <- c('ANO', 'SEXO')`. Then for each file, keep only the desired columns, rename it to their `uniname`, compute the number of deaths per sex and save the results in `df`. Finally, calculate the proportion of deaths per sex on each year. Notice that the vast majority of the code is for go for each file and unify the names, so you just need to modify three things:
+
+* Which columns you need in `SELECTED_COLUMNS <- c('ANO', 'SEXO')`.
+* The processing per file.
+* The processing of the whole data.
+
+In the following chunk, this just represents four lines, the rest is the same for any scenario. In other words, this is a template!
+```{r}
+# BEGAN MODIFY:  Which columns you need?
+SELECTED_COLUMNS <- c('ANO', 'SEXO')
+# END MODIFY. 
+
+df <- NULL
+for (file in files) {
+  # Process partial dictionary (if you don't  understand don't worry this is
+  # always like that so you could copy and paste freely).
+  df_selected <- dict %>% 
+    dplyr::filter(uniname %in% SELECTED_COLUMNS) %>%
+    dplyr::select(uniname, uniclass, all_of(file)) %>%
+    tidyr::drop_na(file) %>%
+    base::replace(is.na(.), '')
+  original_colnames <- df_selected[[file]]
+  new_colnames <- df_selected$uniname
+  
+  # Open file with lazy evaluation for speed (you could also use
+  # `read_parquet()`).
+  df0 <- arrow::open_dataset(sprintf('%s/%s', folder, file)) %>%
+    # Select `SELECTED_COLUMNS` and rename it with the `uniname`.
+    dplyr::select(all_of(original_colnames)) %>%
+    dplyr::rename_at(original_colnames, ~new_colnames) %>% 
+    # Preserve order.
+    dplyr::select(all_of(SELECTED_COLUMNS)) %>% 
+    
+    # BEGAN MODIFY: Process your data as required  with the `uniname`s.
+    dplyr::group_by(ANO, SEXO) %>% 
+    summarise(n_ = n()) %>% ungroup %>% 
+    # END MODIFY. 
+    
+    # End lazy evaluation. If you use `read_parquet() this is unnecesary.
+    collect
+  
+  # Save the iteration results.
+  # NOTE: # If all columns are going to have the same columns is recommended to 
+  # use `rbind()`.
+  df <- dplyr::bind_rows(df, df0)
+}
+# MODIFY: Process your data as required.
+df %>% group_by(ANO) %>% mutate(prop_ = n_ / sum(n_))
+# END MODIFY. 
+```
+But what if the per `uniname` the variable have different classes per file. Well, we need a small extra step. To see this lets artificially change the `ANO` integer class to a character for the 2022 file.
+```{r}
+path_file_2022 <- sprintf('%s/%s', folder, files[stringr::str_detect(files, '2022')])
+read_parquet(path_file_2022) %>% 
+  mutate(ANO = as.character(ANO)) %>% 
+  write_parquet(path_file_2022)
+```
+Now, this is not a major problem, if we run the previous code we will obtain the same results, with the only difference that the `ANO` will be now a character. However, in many scenarios this could be problematic and inefficient. To solve this we need to make two changes to our current methodology. First, we manually must fill the `uniclass` column of our dictionary for the problematic variable (in this case `ANO` must be an integer). Again, this could be easily done in Excel but for our purposes we will use code.
+```{r}
+dict <- dict %>% mutate(uniclass = if_else(uniname == 'ANO', 'integer', uniclass))
+```
+Then, we will add a few lines to our template so that for each file, the selected columns are force to have the data type of `uniclass`. The following code support: "integer", "logical", "numeric", "character" and "date". This makes our template larger, but does not add to us more work.
+```{r}
+# BEGAN MODIFY:  Which columns you need?
+SELECTED_COLUMNS <- c('ANO', 'SEXO')
+# END MODIFY. 
+
+df <- NULL
+for (file in files) {
+  # Process partial dictionary (if you don't  understand don't worry this is
+  # always like that so you could copy and paste freely).
+  df_selected <- dict %>% 
+    dplyr::filter(uniname %in% SELECTED_COLUMNS) %>%
+    dplyr::select(uniname, uniclass, all_of(file)) %>%
+    tidyr::drop_na(file) %>%
+    base::replace(is.na(.), '')
+  original_colnames <- df_selected[[file]]
+  new_colnames <- df_selected$uniname
+  new_classes <- df_selected$uniclass %>% tolower
+  
+  # Open file with lazy evaluation for speed (you could also use
+  # `read_parquet()`).
+  df0 <- arrow::open_dataset(sprintf('%s/%s', folder, file)) %>%
+    # Select `SELECTED_COLUMNS` and rename it with the `uniname`.
+    dplyr::select(all_of(original_colnames)) %>%
+    dplyr::rename_at(original_colnames, ~new_colnames) %>% 
+    # Preserve order.
+    dplyr::select(all_of(SELECTED_COLUMNS)) %>% 
+    # Force the class.
+    # NOTE: Lazy evaluation is picky, so if you have problematic values
+    # (e.g. "" to numeric), you will need to filter those observations or collect.
+    dplyr::mutate(
+      across(all_of(new_colnames[new_classes == 'numeric']), as.numeric),
+      across(all_of(new_colnames[new_classes == 'integer']), as.integer),
+      across(all_of(new_colnames[new_classes == 'chracter']), as.character),
+      across(all_of(new_colnames[new_classes == 'date']), lubridate::ymd),
+      across(all_of(new_colnames[new_classes == 'logical']), as.logical)) %>%
+    
+    # BEGAN MODIFY: Process your data as required  with the `uniname`s. 
+    # NOTE:  Again lazy evaluation is picky and is still on develop to support
+    # more functions. Therefore, some features cannot be done in it, such as
+    # `dplyr::slice` or window functions. If this is the case you can collect
+    # and do the processing normally, however this could consume a lot of time,
+    # then you could  be creative and look for another way to achieve the
+    # objective. Nevertheless, one option is to employ the function
+    # `arrow::to_duckdb()`, which allow you to use more function without
+    # increasing to much the time consumption.
+    dplyr::group_by(ANO, SEXO) %>% 
+    summarise(n_ = n()) %>% ungroup %>% 
+    # END MODIFY. 
+    
+    # End lazy evaluation. If you use `read_parquet() this is unnecesary.
+    collect
+  
+  # Save the iteration results.
+  # NOTE: # If all columns are going to have the same columns is recommended to 
+  # use `rbind()`.
+  df <- dplyr::bind_rows(df, df0)
+}
+# MODIFY: Process your data as required.
+df %>% group_by(ANO) %>% mutate(prop_ = n_ / sum(n_))
+# END MODIFY. 
+```
+
+```{r}
+# dict_path <- sprintf('%s/dict_modified.xlsx', folder)
+# dict <- readxl::read_excel(dict_path) %>%
+#   dplyr::mutate(uniclass = tolower(uniclass))
+# files <- names(dict)[-(1L:4L)]
+# SELECTED_COLUMNS <- c('YEAR', 'ID', 'LOCATION')
+# 
+# df <- NULL
+# tic()
+# for (file in files) {
+#   sprintf('Began %s', file) %>% cat
+#   tic()
+#   df_selected <- dplyr::filter(dict, uniname %in% SELECTED_COLUMNS) %>%
+#     dplyr::select(uniname, uniclass, all_of(file)) %>%
+#     tidyr::drop_na(file) %>%
+#     base::replace(is.na(.), '')
+# 
+#   original_colnames <- df_selected[[file]]
+#   new_colnames <- df_selected$uniname
+#   new_classes <- df_selected$uniclass
+# 
+#   df0 <- arrow::open_dataset(sprintf('%s/%s', folder, file)) %>%
+#     dplyr::select(all_of(original_colnames)) %>%
+#     dplyr::rename_at(original_colnames, ~new_colnames) %>%
+#     # Lazy evaluation is picky, so if you have problematic values
+#     # (e.g. "" to numeric), you will need to filter those observations or collect.
+#     dplyr::mutate(
+#       across(all_of(new_colnames[new_classes == 'numeric']), as.numeric),
+#       across(all_of(new_colnames[new_classes == 'integer']), as.integer),
+#       across(all_of(new_colnames[new_classes == 'date']), lubridate::ymd),
+#       across(all_of(new_colnames[new_classes == 'logical']), as.logical)) %>%
+#     # Process data as required. Again lazy evaluation is picky and is still on
+#     # develop to support more functions. Therefore, some features
+#     # cannot be done in it, such as `dplyr::slice` or window functions. If this
+#     # is the case you can collect and do the processing normally, however this
+#     # could consume a lot of time, then you could  be creative and look for
+#     # another way to achieve the objective. Nevertheless, one option is to
+#     # employ the function `arrow::to_duckdb`, which allow you to use more
+#     # function without increasing the time consumption.
+#     arrow::to_duckdb() %>%
+#     dplyr::slice_sample(n = 10) %>%
+#     dplyr::group_by(ID) %>%
+#     dplyr::mutate(aux = max(LOCATION, ID)) %>% collect
+#   # If all columns are going to have the same columns is recommended to use
+#   #`rbind.`
+#   df <- dplyr::bind_rows(df, df0)
+# 
+#   sprintf('\n\tCompleted in %f sec.\n', get_values_tic_msg()) %>% cat
+# }
+# 
+# sprintf('\nThe process was completed in %f min.',
+        # get_values_tic_msg(unit = 'min')) %>% cat
+```
+

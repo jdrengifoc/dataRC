@@ -1,0 +1,8 @@
+bibentry(
+  bibtype  = "Manual",
+  title    = "dataRC: Towards a frictionless world",
+  author   = "Juan David Rengifo-Castro",
+  year     = "2024",
+  note     = "R package version 1.0.0",
+  url      = "\"
+)
