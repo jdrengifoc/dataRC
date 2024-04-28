@@ -52,11 +52,11 @@ test_that("crosstab: correct output.", {
 
 # Atomic vectors ----------------------------------------------------------
 
-test_that('shared_elements: correct output', {
-  expect_false(shared_elements(1:10, 0))
-  expect_true(shared_elements(1:3, rep(1:3, 2)))
-  expect_true(shared_elements(rep(1:3, 2), 1:3))
-  expect_true(shared_elements(0, rep(0, 3)))
+test_that('share_all_elements: correct output', {
+  expect_false(share_all_elements(1:10, 0))
+  expect_true(share_all_elements(1:3, rep(1:3, 2)))
+  expect_true(share_all_elements(rep(1:3, 2), 1:3))
+  expect_true(share_all_elements(0, rep(0, 3)))
 })
 
 # Numbers -----------------------------------------------------------------
