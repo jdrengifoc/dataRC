@@ -232,7 +232,8 @@ get_next_consecutives <- function(prev, post) {
 #' @examples
 #' is_substring("abc", "abcdef") # TRUE
 #' is_substring("xyz", "abcdef") # FALSE
-#' str_detect("abcd]", "abcd]ef") # TRUE
+#' is_substring("abcd]", "abcd]ef") # TRUE
+#' is_substring("abcd[", "abcd[ef") # TRUE
 #' @export
 is_substring <- function(str1, str2) {
   # Split both strings into individual characters.

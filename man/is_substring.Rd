@@ -27,5 +27,6 @@ substrings.
 \examples{
 is_substring("abc", "abcdef") # TRUE
 is_substring("xyz", "abcdef") # FALSE
-str_detect("abcd]", "abcd]ef") # TRUE
+is_substring("abcd]", "abcd]ef") # TRUE
+is_substring("abcd[", "abcd[ef") # TRUE
 }
