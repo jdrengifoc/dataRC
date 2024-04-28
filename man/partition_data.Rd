@@ -14,28 +14,37 @@ partition_data(
 \arguments{
 \item{original_file}{Path to the original parquet file.}
 
-\item{partition_folder}{Path to the folder where partitions will be saved.}
+\item{partition_folder}{Path to the folder where partitions must be stored.}
 
-\item{max_partition_size}{Maximum size of each partition (default is 25).}
+\item{max_partition_size}{Maximum size of each partition (the default is
+\code{25}).}
 
-\item{units}{Units of the maximum size ('bytes', 'kb', 'mb', 'gb').}
+\item{units}{Units of storage supported by \code{\link[=files_size]{files_size()}} (the
+default is \code{'mb'}).}
 }
 \value{
-None
+None. Writes the partitions in \code{partition_folder}.
 }
 \description{
-Why do not do it for more functions? ADD VERBOSE
 This function partitions a parquet file into multiple partitions based on the
 specified maximum partition size.
 }
 \note{
 In the urge enhance the performance, the size of each partition is
-  forecast by assuming homogeneous storage demand along the original file.
-  However this may be unrealistic, thus, the `max_partition_size` do not
-  guarantee that the partition with the largest size have at most this size.
-  The above is specially true for small files/partitions, since the memory
-  gains due to the use of parquet becomes weaker.
+forecast by assuming homogeneous storage demand along the original file.
+However this may be unrealistic, thus, the \code{max_partition_size} do not
+guarantee that the partition with the largest size have at most this size.
+The above is specially true for small files/partitions, since the memory
+gains due to the use of parquet becomes weaker.
 }
+\section{Why only partion \code{parquet} files?}{
+
+
+This function is intended to share files via a communication tool that
+limits the size per message (e.g. the mail). Then, before partition the
+data is recommended to convert the file into a more efficient format.
+}
+
 \examples{
 \dontrun{
 partition_data("data/original_data.csv", "partitions/",

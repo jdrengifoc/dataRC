@@ -1,15 +1,16 @@
 #' Wrapper function for reading data functions
 #'
 #' This function receives a file extension and returns the proper reading
-#' function.
+#' function from popular R packages such as: `arrow`, `haven`, `readxl` and
+#' `utils`.
 #'
-#' @param extension A character string specifying the file extension of the data
-#'   file. Supported extensions: 'parquet', 'feather', 'dta', 'xlsx', 'csv',
-#'   'sas', 'rds', 'rdata'.
+#' @param extension A string specifying the file extension that must support the
+#'   returned function. Supported extensions: `'parquet'`, `'feather'`, `'dta'`,
+#'   `'xlsx'`, `'csv'`, `'sas'`, `'rds'` and `'rdata'`. This parameter is case
+#'   robust.
 #' @param ... Additional arguments to be passed to the reading functions
 #'   encapsulated in [dataRC::read_fun()].
-#'
-#' @return A function that can read data from the specified file format. The
+#' @returns A function that can read data from the specified file format. The
 #'   returned function will accept the file path as its first argument.
 #'
 #' @importFrom arrow read_parquet read_feather
@@ -77,12 +78,13 @@ read_fun <- function(extension, ...) {
 #'This function receives a file extension and returns the proper writing
 #'function.
 #'
-#'@param extension A character string specifying the file extension of the
-#'  output file. Supported extensions: 'parquet', 'feather', 'dta', 'xlsx',
-#'  'csv', 'txt', 'sas', 'rds', 'rdata'.
+#'@param extension A string specifying the file extension that must support the
+#'  returned function. Supported extensions: `'parquet'`, `'feather'`, `'dta'`,
+#'  `'xlsx'`, `'csv'`, `'sas'`, `'rds'` and `'rdata'`. This parameter is case
+#'   robust.
 #'@param ... Additional arguments to be passed to the writing functions
 #'  (write.csv, write.table, etc.).
-#'@return A function that can write data to the specified file format. The
+#'@returns A function that can write data to the specified file format. The
 #'  returned function will accept the data object and the file path as
 #'  arguments.
 #'
@@ -135,30 +137,37 @@ write_fun <- function(extension, ...) {
   return(fun)
 }
 
-#' Convert files to a specified format
+#'Modify multiple files to a specified format
 #'
-#' This function converts files to a new format. It iterates through the
-#' provided list of files and converts each file to the specified format.
+#'Converts a group files located in the same folder to a new format. It iterates
+#'through the provided vector of `files` and creates a copy of each file in the
+#'specified format (or extension). The user can set the location of the new
+#'files, which is shared across all files.
 #'
-#' @param folder The path to the folder containing the files to be converted.
-#' @param files A character vector of the file names to be converted. The valid
-#' file extensions are the ones supported by `dataRC::read_fun`.
-#' @param new_extension The extension of the new format to which the files will
-#' be converted. The valid extensions are the ones supported by
-#' `dataRC::write_fun`.
-#' @param new_folder The path to the folder where the converted files will be
-#' saved. If not provided, the new folder will be created inside the original
-#' folder with the same name.
-#' @param verbose Logical (default is TRUE) indicating whether to display
-#' progress messages.
+#'@param folder The path to the folder containing the original files.
+#'@param files A character vector with the file paths to be copy. The paths must
+#'  satisfy the following properties:
 #'
-#' @details This function is robust to uppercase and dots in the new extension.
-#' If the `new_folder` argument is not provided, the new folder will be created
-#' inside the original folder with the same name. Subfolders will be created
-#' inside the new folder to mirror the structure of the original folder.
+#'  * The path must start from the `folder` path.
 #'
-#' @importFrom stringr str_split_i
-#' @export
+#'  * Have a file extensions supported by [dataRC::read_fun()].
+#'@param new_extension A string with the format that must have the copies of the
+#'  original files. Must be a extension supported by [dataRC::write_fun()].
+#'@param new_folder The path to the folder where the converted files will be
+#'  saved (if the folder does not exist will be created). If not provided, the
+#'  new folder will be created inside the original folder with the same name.
+#'@param verbose Logical (the default is `TRUE`) indicating whether to display
+#'  progress messages.
+#' @returns None.
+#'
+#'@details This function is robust to uppercase and dots in the new extension.
+#'  If the `new_folder` argument is not provided, the new folder will be created
+#'  inside the original folder with the same name. If needed, sub folders will
+#'  be created inside the new folder to mirror the structure of the original
+#'  folder.
+#'
+#'@importFrom stringr str_split_i
+#'@export
 #'
 #'@examples
 #' \dontrun{

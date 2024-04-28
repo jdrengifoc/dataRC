@@ -7,20 +7,22 @@
 read_fun(extension, ...)
 }
 \arguments{
-\item{extension}{A character string specifying the file extension of the data
-file. Supported extensions: 'parquet', 'feather', 'dta', 'xlsx', 'csv',
-'sas', 'rds', 'rdata'.}
+\item{extension}{A string specifying the file extension that must support the
+returned function. Supported extensions: \code{'parquet'}, \code{'feather'}, \code{'dta'},
+\code{'xlsx'}, \code{'csv'}, \code{'sas'}, \code{'rds'} and \code{'rdata'}. This parameter is case
+robust.}
 
 \item{...}{Additional arguments to be passed to the reading functions
-encapsulated in [dataRC::read_fun()].}
+encapsulated in \code{\link[=read_fun]{read_fun()}}.}
 }
 \value{
 A function that can read data from the specified file format. The
-  returned function will accept the file path as its first argument.
+returned function will accept the file path as its first argument.
 }
 \description{
 This function receives a file extension and returns the proper reading
-function.
+function from popular R packages such as: \code{arrow}, \code{haven}, \code{readxl} and
+\code{utils}.
 }
 \examples{
 \dontrun{

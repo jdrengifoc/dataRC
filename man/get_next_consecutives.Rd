@@ -12,12 +12,12 @@ get_next_consecutives(prev, post)
 \item{post}{A vector of positive integers representing subsequent numbers.}
 }
 \value{
-A vector containing the next consecutive numbers in 'post' after each
-  element in 'prev'.
+A numeric atomic vector with length at most of \code{min(prev, post)}.
 }
 \description{
-Given two vectors of integers, this function finds the next consecutive
-number in the second vector for each element in the first vector.
+Given two vectors of integers, this function finds the consecutive
+number in the second vector (\code{post}) for each element in the first vector
+(\code{prev}).
 }
 \examples{
 \dontrun{

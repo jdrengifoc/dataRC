@@ -7,17 +7,17 @@
 is_subset_bidirectional(str1, str2)
 }
 \arguments{
-\item{str1}{Atomic string vector.}
-
-\item{str2}{Atomic string vector.}
+\item{str1, str2}{A pair of character vectors with the same \code{length}, or any
+of them has a length of \code{1}. If the latter applies, then all values of the
+other vector are compared with the unique value in the shorter one.}
 }
 \value{
 A logical vector indicating whether each corresponding pair of
 strings satisfies the subset condition.
 }
 \description{
-This function checks if one string is a subset of another in either direction,
-for each pair of strings in the input vectors.
+For each pair of strings in the input vectors \code{str1} and \code{str2}, checks if
+one string is a subset of another in both directions.
 }
 \examples{
 is_subset_bidirectional("hello", "hi")  # FALSE

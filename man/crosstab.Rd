@@ -9,12 +9,17 @@ crosstab(df, var1, var2)
 \arguments{
 \item{df}{A dataframe.}
 
-\item{var1}{Name of the first variable as character.}
+\item{var1}{A character with the name of the first variable .}
 
-\item{var2}{Name of the second variable as character.}
+\item{var2}{A character with the name  of the second variable.}
 }
 \value{
-A cross-tabulation table.
+A cross-tabulation table with the following properties:
+\itemize{
+\item The first column has the name of \code{var1} and all values of \code{var1} in \code{df}.
+\item The other columns has as names all the values of \code{var2} in \code{df}.
+\item The cell (i, j) has the absolute frequency of the combination of values.
+}
 }
 \description{
 Performs a cross-tabulation of two variables in a dataframe.

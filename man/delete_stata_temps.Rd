@@ -7,7 +7,7 @@
 delete_stata_temps()
 }
 \value{
-None
+None.
 }
 \description{
 The function identifies Stata temporary files based on their naming
@@ -20,6 +20,5 @@ delete_stata_temps()
 }
 }
 \seealso{
-[Stata temporary files
-  FAQ](https://www.stata.com/statalist/archive/2004-01/msg00542.html)
+\href{https://www.stata.com/statalist/archive/2004-01/msg00542.html}{Stata temporary files FAQ}
 }

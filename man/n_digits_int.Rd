@@ -15,6 +15,10 @@ Number of digits in each element of x.
 \description{
 Counts the number of digits in an integer.
 }
+\details{
+If \code{x} only has positive integer, is faster to use
+\code{\link[=n_digits_natural]{n_digits_natural()}}.
+}
 \examples{
 n_digits_int(-12345)
 n_digits_int(0)

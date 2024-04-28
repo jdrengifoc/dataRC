@@ -1,14 +1,21 @@
 #' Partition a parquet file into multiple parquet files of a maximum size.
 #'
-#' Why do not do it for more functions? ADD VERBOSE
 #' This function partitions a parquet file into multiple partitions based on the
 #' specified maximum partition size.
 #'
+#' @section Why only partion `parquet` files?:
+#'
+#'   This function is intended to share files via a communication tool that
+#'   limits the size per message (e.g. the mail). Then, before partition the
+#'   data is recommended to convert the file into a more efficient format.
+#'
 #' @param original_file Path to the original parquet file.
-#' @param partition_folder Path to the folder where partitions will be saved.
-#' @param max_partition_size Maximum size of each partition (default is 25).
-#' @param units Units of the maximum size ('bytes', 'kb', 'mb', 'gb').
-#' @return None
+#' @param partition_folder Path to the folder where partitions must be stored.
+#' @param max_partition_size Maximum size of each partition (the default is
+#'   `25`).
+#' @param units Units of storage supported by [dataRC::files_size()] (the
+#'   default is `'mb'`).
+#' @returns None. Writes the partitions in `partition_folder`.
 #' @note In the urge enhance the performance, the size of each partition is
 #'   forecast by assuming homogeneous storage demand along the original file.
 #'   However this may be unrealistic, thus, the `max_partition_size` do not
@@ -60,13 +67,12 @@ partition_data <- function(original_file, partition_folder,
 
 #' Join partitions into a single file
 #'
-#' ADD VERBOSE.
-#' This function combines data the partition files created by
-#' [dataRC::partition_data()] into a single file of the desired extension type.
+#' This function bind the partitions created by [dataRC::partition_data()] into
+#' a single file of the desired extension type.
 #'
 #' @param partition_folder Path to the folder containing partition files.
 #' @param new_file Path to the new combined file.
-#' @return None
+#' @returns None. Writes the merged file in `new_file`.
 #'
 #' @examples
 #' \dontrun{

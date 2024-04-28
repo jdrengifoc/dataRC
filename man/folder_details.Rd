@@ -2,7 +2,7 @@
 % Please edit documentation in R/01_delete_files.R
 \name{folder_details}
 \alias{folder_details}
-\title{Create a table with information of all the files inside a list of folders}
+\title{Create table with information of all the files in specified folders}
 \usage{
 folder_details(folders, file_path = NULL, units = "bytes", verbose = TRUE)
 }
@@ -11,23 +11,26 @@ folder_details(folders, file_path = NULL, units = "bytes", verbose = TRUE)
 
 \item{file_path}{The path where the Excel file will be saved.}
 
-\item{units}{The desired units for file sizes ('bytes', 'kb', 'mb', or 'gb').}
+\item{units}{The desired units for file sizes \code{'bytes'} (the default),
+\code{'kb'}, \code{'mb'}, or \code{'gb'}.}
 
-\item{verbose}{If TRUE (default), displays a message to the user.}
+\item{verbose}{A boolean. If \code{TRUE} (the default), displays a message
+confirming successful completion of the process.}
 }
 \value{
-None
+None.
 }
 \description{
 This function takes a vector of folder paths, retrieves details about files
-in those folders, and writes the information to an Excel file. The details
+in those folders. Then writes the information to an Excel file. The details
 include file names, last update timestamps, file sizes proportional sizes to
 the folder where it is stored, and add a column for potential deletion.
 }
 \details{
-Eases the cleaning of folder by creating an excel with the details
-  about each file. Once created the user must change/delete the zeros in the
-  delete column for the files that must be deleted.
+Simplifies folder cleaning by generating an Excel file containing
+details about each file. After creation, the user is required to modify or
+delete zeros in the \code{delete} column for files to be deleted. Finally, call
+\code{\link[=delete_files_from_excel]{delete_files_from_excel()}}.
 }
 \examples{
 \dontrun{

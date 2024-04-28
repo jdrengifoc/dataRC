@@ -4,9 +4,10 @@
 #' files combined. File sizes can be reported in different units (bytes,
 #' kilobytes, megabytes, gigabytes).
 #'
-#' @param file_paths A vector of file paths.
-#' @param units The desired units for file sizes ('bytes', 'kb', 'mb', or 'gb').
-#' @return The total size of all files combined.
+#' @param files A vector of file paths.
+#' @param units The desired file size unit: `'bytes'` (the default), `'kb'`,
+#'   `'mb'`, or `'gb'`.
+#' @returns The total size of all files combined.
 #' @export
 #'
 #' @examples
@@ -14,7 +15,7 @@
 #' files_size(c("file1.txt", "file2.txt"), units = 'mb')
 #' }
 
-files_size <- function(file_paths, units = 'bytes'){
+files_size <- function(files, units = 'bytes'){
   units <- tolower(units)
   unit_coefficients <- 1024^c(bytes = 0, kb = 1, mb = 2, gb = 3)
 
@@ -22,20 +23,23 @@ files_size <- function(file_paths, units = 'bytes'){
     stop("Invalid value for units. Valid values: 'bytes', 'kb', 'mb', 'gb'.")
   }
 
-  size <- sum(file.info(file_paths)$size)
+  size <- sum(file.info(files)$size)
   return(size / unit_coefficients[[units]])
 }
 
 #' Get the size of each file
 #'
 #' This function takes a vector of file paths and returns a data frame with the
-#' filename and size of each file. File sizes can be reported in different units
-#' (bytes, kilobytes, megabytes, gigabytes). A file will have a size of NA iff
-#' the file doesn't exists.
+#' file name and size of each file. File sizes can be reported in different
+#' units (bytes, kilobytes, megabytes, gigabytes). A file will have a size of NA
+#' if and only if, the file doesn't exists.
 #'
-#' @param file_paths A vector of file paths.
-#' @param units The desired units for file sizes ('bytes', 'kb', 'mb', or 'gb').
-#' @return A data frame with filename and size columns.
+#' @inheritParams files_size
+#' @returns A data frame with the following properties:
+#'
+#' * Has as many rows as `files`.
+#' * Has two columns: `filename` (identical to `files`) and `size` (in the
+#' desired `units`).
 #'
 #' @importFrom purrr map
 #' @importFrom dplyr mutate
@@ -47,7 +51,7 @@ files_size <- function(file_paths, units = 'bytes'){
 #' }
 #'
 #' @import dplyr
-file_size <- function(file_paths, units = 'bytes'){
+file_size <- function(files, units = 'bytes'){
   units <- tolower(units)
   unit_coefficients <- c(bytes = 1, kb = 1024, mb = 1024^2, gb = 1024^3)
 
@@ -55,7 +59,7 @@ file_size <- function(file_paths, units = 'bytes'){
     stop("Invalid value for units. Valid values: 'bytes', 'kb', 'mb', 'gb'.")
   }
 
-  files_to_list <- purrr::map(file_paths, ~data.frame(
+  files_to_list <- purrr::map(files, ~data.frame(
     filename = .x, size = file.info(.x)$size))
   df <- do.call(rbind, files_to_list)
   df <- df %>%

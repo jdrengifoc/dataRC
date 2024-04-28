@@ -10,23 +10,24 @@ delete_files_from_excel(file_path, save = 0, verbose = T)
 \item{file_path}{The path to the Excel file containing file details.}
 
 \item{save}{The value in the delete column that avoid the deletion of the
-file. The default value is 0.}
+file. The default value is \code{0}.}
 
-\item{verbose}{If TRUE (default), displays a message to the user.}
+\item{verbose}{A boolean. If \code{TRUE} (the default), displays a message
+summarizing the deletion process.}
 }
 \value{
-None
+None.
 }
 \description{
-Based on an excel file, this function deletes all the files oriented by the
+Based on an Excel file, this function deletes all the files oriented by the
 user.
 }
 \details{
-This function should be used with [dataRC::folder_details()], which
-  generates an Excel file with detailed information for each file of a
-  folder. After this, the user must manually modify the "delete" column in
-  such way, that the files that are expected to be deleted must have any
-  value different to the `save` value (by default 0).
+Is highly recommended to use \code{\link[=folder_details]{folder_details()}}, which
+generates an Excel file with detailed information for each file of a
+folder. After this, the user must manually modify the "delete" column in
+such way, that the files that are expected to be deleted must have any
+value different to the \code{save} value (by default 0).
 }
 \examples{
 \dontrun{

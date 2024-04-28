@@ -12,12 +12,11 @@ unpartition_data(partition_folder, new_file)
 \item{new_file}{Path to the new combined file.}
 }
 \value{
-None
+None. Writes the merged file in \code{new_file}.
 }
 \description{
-ADD VERBOSE.
-This function combines data the partition files created by
-[dataRC::partition_data()] into a single file of the desired extension type.
+This function bind the partitions created by \code{\link[=partition_data]{partition_data()}} into
+a single file of the desired extension type.
 }
 \examples{
 \dontrun{

@@ -4,12 +4,13 @@
 \alias{files_size}
 \title{Get the total size of multiple files.}
 \usage{
-files_size(file_paths, units = "bytes")
+files_size(files, units = "bytes")
 }
 \arguments{
-\item{file_paths}{A vector of file paths.}
+\item{files}{A vector of file paths.}
 
-\item{units}{The desired units for file sizes ('bytes', 'kb', 'mb', or 'gb').}
+\item{units}{The desired file size unit: \code{'bytes'} (the default), \code{'kb'},
+\code{'mb'}, or \code{'gb'}.}
 }
 \value{
 The total size of all files combined.

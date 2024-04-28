@@ -4,21 +4,27 @@
 \alias{file_size}
 \title{Get the size of each file}
 \usage{
-file_size(file_paths, units = "bytes")
+file_size(files, units = "bytes")
 }
 \arguments{
-\item{file_paths}{A vector of file paths.}
+\item{files}{A vector of file paths.}
 
-\item{units}{The desired units for file sizes ('bytes', 'kb', 'mb', or 'gb').}
+\item{units}{The desired file size unit: \code{'bytes'} (the default), \code{'kb'},
+\code{'mb'}, or \code{'gb'}.}
 }
 \value{
-A data frame with filename and size columns.
+A data frame with the following properties:
+\itemize{
+\item Has as many rows as \code{files}.
+\item Has two columns: \code{filename} (identical to \code{files}) and \code{size} (in the
+desired \code{units}).
+}
 }
 \description{
 This function takes a vector of file paths and returns a data frame with the
-filename and size of each file. File sizes can be reported in different units
-(bytes, kilobytes, megabytes, gigabytes). A file will have a size of NA iff
-the file doesn't exists.
+file name and size of each file. File sizes can be reported in different
+units (bytes, kilobytes, megabytes, gigabytes). A file will have a size of NA
+if and only if, the file doesn't exists.
 }
 \examples{
 \dontrun{

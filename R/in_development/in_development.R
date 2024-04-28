@@ -1,15 +1,29 @@
-### IDEAS
-#' UPDATE DICTS..
-#' EDIT UNINAME FUNCTION.
-#' MERGE UNINAME
-#' discarded_uniname <- dict %>%
-#' filter(uniname == 'IDADMISALU') %>%
-#' select(-uniname, -uniclass, -class_mode, -unique_classes) %>%
-#' select(where(~all(!is.na(.))))
-#' SMART PARTITION
-#' If the last partition is very small append to the previous partition.
-#' SMART UNPARTITION
-#' usar open_dataset con una particion falsa.
+### IDEAS / TO DEVELOP
+#' * UPDATE DICTS WITH NEW DATA.
+#'
+#' * ADD A CUSTOM UNINAME FUNCTION.
+#'
+#' * A FUNCTION FOR MERGE UNINAMES DIRECTLY IN R.
+#'   discarded_uniname <- dict %>%
+#'   filter(uniname == 'IDADMISALU') %>%
+#'   select(-uniname, -uniclass, -class_mode, -unique_classes) %>%
+#'   select(where(~all(!is.na(.))))
+#'
+#' * SMART PARTITION
+#'   If the last partition is very small append to the previous partition.
+#'
+#' * SMART UNPARTITION
+#'   usar open_dataset con una particion falsa.
+#'
+#' * Create VIGNETTES for `01_delete_files` and `04_partition_data`.
+#'
+#' * GROUP FILES
+#'   In the smallest number of clusters that satisfy a maximum size per cluster
+#'   and minimize the maximum cluster size.
+#'
+#' * ROBUST LAZY LEFT JOIN
+#'
+#' * Add verbose parameter for partitions.
 
 
 

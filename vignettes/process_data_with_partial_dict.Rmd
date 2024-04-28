@@ -242,7 +242,7 @@ for (file in files) {
     dplyr::mutate(
       across(all_of(new_colnames[new_classes == 'numeric']), as.numeric),
       across(all_of(new_colnames[new_classes == 'integer']), as.integer),
-      across(all_of(new_colnames[new_classes == 'chracter']), as.character),
+      across(all_of(new_colnames[new_classes == 'character']), as.character),
       across(all_of(new_colnames[new_classes == 'date']), lubridate::ymd),
       across(all_of(new_colnames[new_classes == 'logical']), as.logical)) %>%
     

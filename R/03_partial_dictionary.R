@@ -1,12 +1,13 @@
-#' Append NA values to a vector to reach a target length
+#' Append `NA` values to a vector to reach a target length
 #'
-#' This function pads a vector with NA values to achieve a specified target
-#' length.
+#' This function pads a vector at the tail with `NA` values, to achieve a
+#' specified length target.
 #'
 #' @param vec The input vector to be padded.
 #' @param target_length The desired length of the padded vector.
 #'
-#' @return A vector padded with NA values to reach the target length.
+#' @returns A vector of length `target_length` where its first `length(vec)`
+#'   elements are identical to `vec`. The remain tail elements are `NA`.
 #'
 #' @examples
 #' # Pad a vector with NA values to reach a target length of 10
@@ -19,33 +20,46 @@ pad_with_nas <- function(vec, target_length) {
   vec <- c(vec, rep(NA, max(0, target_length - n_vec)))
   return(vec)
 }
-#' Write an Excel file containing the names and classes of each file
+
+#'Write an Excel file containing the names and classes of each file
 #'
-#' Why is separated from sort? This function creates a partial dictionary to
-#' ease the unification of databases that have common information but may have
-#' heterogeneity across files. For instance, some databases could have more or
-#' less variable or the name and data type may change across files.
-#' @param folder A character with the root folder where is stored the data.
-#' @param files A character vector of file paths (from the `folder`)from which
-#'   to extract column names and classes.
-#' @param dict_path The path where is going to be saved the dictionary.
-#' @param n_infer The number of rows to infer column classes from in each file
-#'   (default is 100).
-#' @param overwrite Logical indicating whether to overwrite the dictionary .xlsx
-#'   if it already exists. The default is FALSE to protect your existing
-#'   dictionaries.
-#' @param verbose Logical (default is TRUE) indicating whether to display
-#'   progress messages.
-#' @details This function extracts the column names and classes (data types)
-#'   from each file, and stores them in a dictionary saved as an Excel file.
-#' @note The `n_infer` is a critical parameter that comes with a trade off
-#'   between speed and certainty that the class is properly inferred. If your
-#'   data is small or you do not have a hurry, you could replace it by `Inf`.
-#'   However, even with a small value of 100 I have not experience any problem
-#'   with hundreds of files with millions of observations and tens of variables.
-#'   Is important to have all the data files in a common folder (root folder).
-#'   Of course it may be partitioned in sub-folders.
-#' @return None. The function saves the partial dictionary as an Excel file.
+#'This is a first step to create a "raw partial dictionary" that ease the
+#'unification of databases that have common information but may have
+#'heterogeneity across files. For instance, databases could have different
+#'number of variables, or the name and data type may change across files.
+#'
+#'@param folder A character with the root folder where is stored the data.
+#'@param files A character vector of file paths (from the `folder`) from which
+#'  to extract column names and classes.
+#'@param dict_path The path where is going to be saved the dictionary.
+#'@param n_infer The number of rows to infer column classes from in each file
+#'  (the default is `100`).
+#'@param overwrite A boolean indicating whether to overwrite the dictionary if
+#'  it already exists. The default is `FALSE` to protect your existing
+#'  dictionaries.
+#'@param verbose A boolean (the default is `TRUE`) indicating whether to display
+#'  progress messages.
+#'@details This function extracts the column names and classes (data types) from
+#'  each file, and stores them in a dictionary saved as an Excel file with two
+#'  sheets (one for the names and other for the classes). This raw dictionary
+#'  lacks polish and is almost useless in this form, then is highly recommended
+#'  to refine it. The function [dataRC::sort_partial_dictionary()] accomplished
+#'  this job. So, Why don't merge both functions in the first place? Well, there
+#'  are at least two reasons. First, the creation of this preliminary partial
+#'  dictionary is potentially time demanding, so by splitting the process we
+#'  guarantee that an error in the refinement does not affect the heavy work.
+#'  Second, allows the user to elaborate a custom processing.
+#'@note The `n_infer` is a critical parameter that comes with a trade off
+#'  between speed and certainty that the class is properly inferred. If your
+#'  data is small or you do not have a hurry, you could replace it by `Inf`.
+#'  However, even with a small value of 100 I have not experience any problem
+#'  with hundreds of files with millions of observations and tens of variables.
+#'  Is important to have all the data files in a common folder (root folder). Of
+#'  course it may be partitioned in sub-folders.
+#'@returns None. The function saves the raw partial dictionary as an Excel file.
+#'
+#'@seealso  See `vignette('process_data_with_partial_dict', package = 'dataRC')`
+#'  for a full example.
 #'
 #' @examples
 #' \dontrun{
@@ -55,9 +69,9 @@ pad_with_nas <- function(vec, target_length) {
 #' create_partial_dictionary(folder, files, "my_folder/my_dictionary.xlsx")
 #' }
 #'
-#' @importFrom arrow open_dataset
-#' @importFrom openxlsx createWorkbook addWorksheet writeData saveWorkbook
-#' @export
+#'@importFrom arrow open_dataset
+#'@importFrom openxlsx createWorkbook addWorksheet writeData saveWorkbook
+#'@export
 #'
 create_partial_dictionary <- function(folder, files, dict_path,
                                       n_infer = 100L, overwrite = F,
@@ -107,30 +121,42 @@ create_partial_dictionary <- function(folder, files, dict_path,
   openxlsx::saveWorkbook(OUT, dict_path, overwrite = overwrite)
 }
 
-#' Organize partial dictionary and creates useful columns
+#' Refine the "raw partial dictionary"
 #'
-#' This function sorts a partial dictionary  used for identifying and unifying
-#' the data column names and classes across files. It reads the original
-#' dictionary file, sorts the column names alphabetically, and creates a new
-#' dictionary with the sorted column names and corresponding classes. The sorted
-#' dictionary is saved into a xlsx file.
+#' This function refine the raw partial dictionary created by
+#' [dataRC::create_partial_dictionary()]. It reads the raw dictionary file,
+#' sorts the column names by frequency (across all files) and alphabetically,
+#' and creates some columns with descriptive statistics for each variable. The
+#' sorted (refined) dictionary is saved into a xlsx file.
 #'
-#' @param old_dict_path Path to the original dictionary file.
-#' @param new_dict_path Path to save the sorted dictionary file. If NULL, the
-#'   original file will be `old_dict_path` (default is NULL).
+#' @param old_dict_path Path to the raw dictionary file.
+#' @param new_dict_path Path to save the sorted (refined) dictionary If `NULL`,
+#'   the original file will be `old_dict_path` (the default is `NULL`).
 #' @param overwrite Logical indicating whether to overwrite the existing
 #'   dictionary file if `new_dict_path` already exists. Its default value is
-#'   FALSE to avoid undesired changes.
+#'   `FALSE` to avoid undesired changes.
 #'
-#' @return None. The function saves the sorted dictionary file to the specified
-#'   location.
+#' @returns None. The function saves the sorted dictionary file to the specified
+#'   location. The dictionary has the following columns:
 #'
-#' @details The dictionary will have unique name (`uniname`) across files, the
-#'   most common classes and the unique classes per `uniname`. After this, the
-#'   user manually must fill the `uniclass` column in order to guarantee a
-#'   robust data process (see
-#'   `vignette('vignettes/process_data_with_partial_dict.Rmd')` for a full
-#'   example).
+#'   * `uniname`: Suggested unifying name for each variable. It groups across
+#'   files identical case robust variable names.
+#'
+#'   * `uniclass`: Empty column that is intended to be filled manually by the
+#'   user with the unifying class for each variable. Theoretically, this could
+#'   be filled with any value, however, based on the template in
+#'   `vignette('vignettes/process_data_with_partial_dict.Rmd')` is recommended
+#'   to use `'integer'`, `'numeric'`, `'character'`, `'date'` and `'logical'`.
+#'
+#'   * `coverage`: The percentage of files that have a match with the `uniname`.
+#'
+#'   * `class_mode`: The class mode per `uniname` computed with
+#'   [dataRC::get_mode()].
+#'
+#'   * `unique_classes`: All the classes per `uniname`.
+#'
+#' @seealso  See `vignette('process_data_with_partial_dict', package =
+#'   'dataRC')` for a full example.
 #'
 #' @examples
 #' \dontrun{

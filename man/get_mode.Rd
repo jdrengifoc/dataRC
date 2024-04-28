@@ -9,11 +9,11 @@ get_mode(values, na.rm = T)
 \arguments{
 \item{values}{An atomic vector for which to find the mode.}
 
-\item{na.rm}{Logical that determine whether the missing values will be
-removed.}
+\item{na.rm}{Logical (the default is \code{TRUE}) that determine whether the
+missing values will be removed.}
 }
 \value{
-The mode of the input vector.
+An atomic vector with the mode (or modes) of \code{values}.
 }
 \description{
 This function calculates the mode of a vector, which is the value that

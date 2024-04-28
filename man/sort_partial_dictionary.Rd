@@ -2,38 +2,43 @@
 % Please edit documentation in R/03_partial_dictionary.R
 \name{sort_partial_dictionary}
 \alias{sort_partial_dictionary}
-\title{Organize partial dictionary and creates useful columns}
+\title{Refine the "raw partial dictionary"}
 \usage{
 sort_partial_dictionary(old_dict_path, new_dict_path = NULL, overwrite = F)
 }
 \arguments{
-\item{old_dict_path}{Path to the original dictionary file.}
+\item{old_dict_path}{Path to the raw dictionary file.}
 
-\item{new_dict_path}{Path to save the sorted dictionary file. If NULL, the
-original file will be `old_dict_path` (default is NULL).}
+\item{new_dict_path}{Path to save the sorted (refined) dictionary If \code{NULL},
+the original file will be \code{old_dict_path} (the default is \code{NULL}).}
 
 \item{overwrite}{Logical indicating whether to overwrite the existing
-dictionary file if `new_dict_path` already exists. Its default value is
-FALSE to avoid undesired changes.}
+dictionary file if \code{new_dict_path} already exists. Its default value is
+\code{FALSE} to avoid undesired changes.}
 }
 \value{
 None. The function saves the sorted dictionary file to the specified
-  location.
+location. The dictionary has the following columns:
+\itemize{
+\item \code{uniname}: Suggested unifying name for each variable. It groups across
+files identical case robust variable names.
+\item \code{uniclass}: Empty column that is intended to be filled manually by the
+user with the unifying class for each variable. Theoretically, this could
+be filled with any value, however, based on the template in
+\code{vignette('vignettes/process_data_with_partial_dict.Rmd')} is recommended
+to use \code{'integer'}, \code{'numeric'}, \code{'character'}, \code{'date'} and \code{'logical'}.
+\item \code{coverage}: The percentage of files that have a match with the \code{uniname}.
+\item \code{class_mode}: The class mode per \code{uniname} computed with
+\code{\link[=get_mode]{get_mode()}}.
+\item \code{unique_classes}: All the classes per \code{uniname}.
+}
 }
 \description{
-This function sorts a partial dictionary  used for identifying and unifying
-the data column names and classes across files. It reads the original
-dictionary file, sorts the column names alphabetically, and creates a new
-dictionary with the sorted column names and corresponding classes. The sorted
-dictionary is saved into a xlsx file.
-}
-\details{
-The dictionary will have unique name (`uniname`) across files, the
-  most common classes and the unique classes per `uniname`. After this, the
-  user manually must fill the `uniclass` column in order to guarantee a
-  robust data process (see
-  `vignette('vignettes/process_data_with_partial_dict.Rmd')` for a full
-  example).
+This function refine the raw partial dictionary created by
+\code{\link[=create_partial_dictionary]{create_partial_dictionary()}}. It reads the raw dictionary file,
+sorts the column names by frequency (across all files) and alphabetically,
+and creates some columns with descriptive statistics for each variable. The
+sorted (refined) dictionary is saved into a xlsx file.
 }
 \examples{
 \dontrun{
@@ -42,4 +47,7 @@ sort_partial_dictionary(old_dict_path = "original_dictionary.xlsx",
                           overwrite = TRUE)
 }
 
+}
+\seealso{
+See \code{vignette('process_data_with_partial_dict', package = 'dataRC')} for a full example.
 }

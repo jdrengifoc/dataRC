@@ -16,42 +16,50 @@ create_partial_dictionary(
 \arguments{
 \item{folder}{A character with the root folder where is stored the data.}
 
-\item{files}{A character vector of file paths (from the `folder`)from which
+\item{files}{A character vector of file paths (from the \code{folder}) from which
 to extract column names and classes.}
 
 \item{dict_path}{The path where is going to be saved the dictionary.}
 
 \item{n_infer}{The number of rows to infer column classes from in each file
-(default is 100).}
+(the default is \code{100}).}
 
-\item{overwrite}{Logical indicating whether to overwrite the dictionary .xlsx
-if it already exists. The default is FALSE to protect your existing
+\item{overwrite}{A boolean indicating whether to overwrite the dictionary if
+it already exists. The default is \code{FALSE} to protect your existing
 dictionaries.}
 
-\item{verbose}{Logical (default is TRUE) indicating whether to display
+\item{verbose}{A boolean (the default is \code{TRUE}) indicating whether to display
 progress messages.}
 }
 \value{
-None. The function saves the partial dictionary as an Excel file.
+None. The function saves the raw partial dictionary as an Excel file.
 }
 \description{
-Why is separated from sort? This function creates a partial dictionary to
-ease the unification of databases that have common information but may have
-heterogeneity across files. For instance, some databases could have more or
-less variable or the name and data type may change across files.
+This is a first step to create a "raw partial dictionary" that ease the
+unification of databases that have common information but may have
+heterogeneity across files. For instance, databases could have different
+number of variables, or the name and data type may change across files.
 }
 \details{
-This function extracts the column names and classes (data types)
-  from each file, and stores them in a dictionary saved as an Excel file.
+This function extracts the column names and classes (data types) from
+each file, and stores them in a dictionary saved as an Excel file with two
+sheets (one for the names and other for the classes). This raw dictionary
+lacks polish and is almost useless in this form, then is highly recommended
+to refine it. The function \code{\link[=sort_partial_dictionary]{sort_partial_dictionary()}} accomplished
+this job. So, Why don't merge both functions in the first place? Well, there
+are at least two reasons. First, the creation of this preliminary partial
+dictionary is potentially time demanding, so by splitting the process we
+guarantee that an error in the refinement does not affect the heavy work.
+Second, allows the user to elaborate a custom processing.
 }
 \note{
-The `n_infer` is a critical parameter that comes with a trade off
-  between speed and certainty that the class is properly inferred. If your
-  data is small or you do not have a hurry, you could replace it by `Inf`.
-  However, even with a small value of 100 I have not experience any problem
-  with hundreds of files with millions of observations and tens of variables.
-  Is important to have all the data files in a common folder (root folder).
-  Of course it may be partitioned in sub-folders.
+The \code{n_infer} is a critical parameter that comes with a trade off
+between speed and certainty that the class is properly inferred. If your
+data is small or you do not have a hurry, you could replace it by \code{Inf}.
+However, even with a small value of 100 I have not experience any problem
+with hundreds of files with millions of observations and tens of variables.
+Is important to have all the data files in a common folder (root folder). Of
+course it may be partitioned in sub-folders.
 }
 \examples{
 \dontrun{
@@ -61,4 +69,8 @@ files <- list.files(folder, recursive = T)
 create_partial_dictionary(folder, files, "my_folder/my_dictionary.xlsx")
 }
 
+}
+\seealso{
+See \code{vignette('process_data_with_partial_dict', package = 'dataRC')}
+for a full example.
 }

@@ -12,13 +12,20 @@ is_substring(str1, str2)
 \item{str2}{The second string.}
 }
 \value{
-TRUE if str1 is a substring of str2, otherwise FALSE.
+\code{TRUE} if \code{str1} is a substring of \code{str2}, otherwise returns
+\code{FALSE.}
 }
 \description{
 This function checks if a string is a substring of another.
 }
+\details{
+Unlike \code{\link[=grepl]{grepl()}} or \code{\link[stringr:str_detect]{stringr::str_detect()}}, is robust to invalid regular
+expressions. For instance, \verb{stringr::str_detect("abcd\[", "abcd\[ef")} or
+\code{stringr::str_detect("abcd]", "abcd]ef")} failed to identify that the
+substrings.
+}
 \examples{
 is_substring("abc", "abcdef") # TRUE
 is_substring("xyz", "abcdef") # FALSE
-
+str_detect("abcd]", "abcd]ef") # TRUE
 }

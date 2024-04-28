@@ -3,7 +3,7 @@
 #' The function identifies Stata temporary files based on their naming
 #' convention. It then deletes the identified files and prints the number of
 #' files deleted along with the cleared disk space.
-#' @return None
+#' @returns None.
 #' @importFrom stringr str_split_1
 #' @export
 #'
@@ -31,22 +31,24 @@ delete_stata_temps <- function() {
     paste('Deleted', length(temps), 'files clearing', deleted_size, 'GB!\n')
     )
 }
-#' Create a table with information of all the files inside a list of folders
+
+#' Create table with information of all the files in specified folders
 #'
 #' This function takes a vector of folder paths, retrieves details about files
-#' in those folders, and writes the information to an Excel file. The details
+#' in those folders. Then writes the information to an Excel file. The details
 #' include file names, last update timestamps, file sizes proportional sizes to
 #' the folder where it is stored, and add a column for potential deletion.
-#'
 #' @param folders A vector of folder paths.
 #' @param file_path The path where the Excel file will be saved.
-#' @param units The desired units for file sizes ('bytes', 'kb', 'mb', or 'gb').
-#' @param verbose If TRUE (default), displays a message to the user.
-#' @return None
-#' @details Eases the cleaning of folder by creating an excel with the details
-#'   about each file. Once created the user must change/delete the zeros in the
-#'   delete column for the files that must be deleted.
-#'
+#' @param units The desired units for file sizes `'bytes'` (the default),
+#'   `'kb'`, `'mb'`, or `'gb'`.
+#' @param verbose A boolean. If `TRUE` (the default), displays a message
+#'   confirming successful completion of the process.
+#' @returns None.
+#' @details Simplifies folder cleaning by generating an Excel file containing
+#'   details about each file. After creation, the user is required to modify or
+#'   delete zeros in the `delete` column for files to be deleted. Finally, call
+#'   [delete_files_from_excel()].
 #' @importFrom dplyr tibble filter arrange mutate
 #' @importFrom magrittr %>%
 #' @importFrom writexl write_xlsx
@@ -93,15 +95,16 @@ folder_details <- function(folders, file_path = NULL, units = 'bytes',
 
 #' Delete files specified in an Excel file
 #'
-#' Based on an excel file, this function deletes all the files oriented by the
+#' Based on an Excel file, this function deletes all the files oriented by the
 #' user.
 #'
 #' @param file_path The path to the Excel file containing file details.
 #' @param save The value in the delete column that avoid the deletion of the
-#'   file. The default value is 0.
-#' @param verbose If TRUE (default), displays a message to the user.
-#' @return None
-#' @details This function should be used with [dataRC::folder_details()], which
+#'   file. The default value is `0`.
+#' @param verbose A boolean. If `TRUE` (the default), displays a message
+#'   summarizing the deletion process.
+#' @returns None.
+#' @details Is highly recommended to use [dataRC::folder_details()], which
 #'   generates an Excel file with detailed information for each file of a
 #'   folder. After this, the user must manually modify the "delete" column in
 #'   such way, that the files that are expected to be deleted must have any

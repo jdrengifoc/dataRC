@@ -10,6 +10,7 @@ Description: This library aims to provide tools for efficient data processing. D
 License: Apache License (== 2.0)
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
 Imports:
   dplyr,
   magrittr,

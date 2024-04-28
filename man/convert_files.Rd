@@ -2,7 +2,7 @@
 % Please edit documentation in R/02_convert_files.R
 \name{convert_files}
 \alias{convert_files}
-\title{Convert files to a specified format}
+\title{Modify multiple files to a specified format}
 \usage{
 convert_files(
   folder,
@@ -13,31 +13,40 @@ convert_files(
 )
 }
 \arguments{
-\item{folder}{The path to the folder containing the files to be converted.}
+\item{folder}{The path to the folder containing the original files.}
 
-\item{files}{A character vector of the file names to be converted. The valid
-file extensions are the ones supported by `dataRC::read_fun`.}
+\item{files}{A character vector with the file paths to be copy. The paths must
+satisfy the following properties:
+\itemize{
+\item The path must start from the \code{folder} path.
+\item Have a file extensions supported by \code{\link[=read_fun]{read_fun()}}.
+}}
 
-\item{new_extension}{The extension of the new format to which the files will
-be converted. The valid extensions are the ones supported by
-`dataRC::write_fun`.}
+\item{new_extension}{A string with the format that must have the copies of the
+original files. Must be a extension supported by \code{\link[=write_fun]{write_fun()}}.}
 
 \item{new_folder}{The path to the folder where the converted files will be
-saved. If not provided, the new folder will be created inside the original
-folder with the same name.}
+saved (if the folder does not exist will be created). If not provided, the
+new folder will be created inside the original folder with the same name.}
 
-\item{verbose}{Logical (default is TRUE) indicating whether to display
+\item{verbose}{Logical (the default is \code{TRUE}) indicating whether to display
 progress messages.}
 }
+\value{
+None.
+}
 \description{
-This function converts files to a new format. It iterates through the
-provided list of files and converts each file to the specified format.
+Converts a group files located in the same folder to a new format. It iterates
+through the provided vector of \code{files} and creates a copy of each file in the
+specified format (or extension). The user can set the location of the new
+files, which is shared across all files.
 }
 \details{
 This function is robust to uppercase and dots in the new extension.
-If the `new_folder` argument is not provided, the new folder will be created
-inside the original folder with the same name. Subfolders will be created
-inside the new folder to mirror the structure of the original folder.
+If the \code{new_folder} argument is not provided, the new folder will be created
+inside the original folder with the same name. If needed, sub folders will
+be created inside the new folder to mirror the structure of the original
+folder.
 }
 \examples{
 \dontrun{

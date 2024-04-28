@@ -7,17 +7,18 @@
 write_fun(extension, ...)
 }
 \arguments{
-\item{extension}{A character string specifying the file extension of the
-output file. Supported extensions: 'parquet', 'feather', 'dta', 'xlsx',
-'csv', 'txt', 'sas', 'rds', 'rdata'.}
+\item{extension}{A string specifying the file extension that must support the
+returned function. Supported extensions: \code{'parquet'}, \code{'feather'}, \code{'dta'},
+\code{'xlsx'}, \code{'csv'}, \code{'sas'}, \code{'rds'} and \code{'rdata'}. This parameter is case
+robust.}
 
 \item{...}{Additional arguments to be passed to the writing functions
 (write.csv, write.table, etc.).}
 }
 \value{
 A function that can write data to the specified file format. The
- returned function will accept the data object and the file path as
- arguments.
+returned function will accept the data object and the file path as
+arguments.
 }
 \description{
 This function receives a file extension and returns the proper writing

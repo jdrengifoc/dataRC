@@ -10,7 +10,7 @@ stata_month2ymd(stata_month)
 \item{stata_month}{Numeric vector representing Stata month format.}
 }
 \value{
-A vector of year-months in POSIXct format.
+A vector of year-months in \code{\link[lubridate:ymd]{lubridate::ym()}} format.
 }
 \description{
 Convert numeric Stata months to date format.

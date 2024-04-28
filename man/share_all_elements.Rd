@@ -2,7 +2,7 @@
 % Please edit documentation in R/05_general_purpose.R
 \name{share_all_elements}
 \alias{share_all_elements}
-\title{Check if two atoms have the same elements.}
+\title{Check if two vectors have the same elements.}
 \usage{
 share_all_elements(atom1, atom2)
 }
@@ -12,10 +12,12 @@ share_all_elements(atom1, atom2)
 \item{atom2}{Second atom.}
 }
 \value{
-TRUE if the atoms have the same elements, FALSE otherwise.
+It returns \code{TRUE} if all elements of \code{atom1} are present in \code{atom2}
+and all elements of \code{atom2} are present in \code{atom1}, otherwise it returns
+\code{FALSE.}
 }
 \description{
-Checks if two atoms have the same elements.
+Determines whether two vectors share all their elements with each other.
 }
 \examples{
 share_all_elements(1:3, c(1, 1, 1, 3, 2, 1, 3))
