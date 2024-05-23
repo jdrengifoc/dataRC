@@ -16,7 +16,7 @@ devtools::test()
 devtools::check()
 devtools::build_readme()
 devtools::document()
-
+devtools::build_rmd("vignettes/process_data_with_partial_dict.Rmd")
 
 
 
