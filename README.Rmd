@@ -38,6 +38,7 @@ devtools::install_github("jdrengifoc/dataRC", dependencies = TRUE, build_vignett
 ## Usage
 
 To learn of use all `dataRC`'s features we provide different kinds of study material as shown in the following table.
+
 | Material         | Status       |
 |------------------|--------------|
 | Documentation    | Complete     |

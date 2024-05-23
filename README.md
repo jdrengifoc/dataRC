@@ -45,10 +45,15 @@ devtools::install_github("jdrengifoc/dataRC", dependencies = TRUE, build_vignett
 ## Usage
 
 To learn of use all `dataRC`’s features we provide different kinds of
-study material as shown in the following table. \| Material \| Status \|
-\|——————\|————–\| \| Documentation \| Complete \| \| README \| Available
-\| \| Vignettes \| Available \| \| Website \| Not started \| \| Video
-Tutorial \| Not started \|
+study material as shown in the following table.
+
+| Material       | Status      |
+|----------------|-------------|
+| Documentation  | Complete    |
+| README         | Available   |
+| Vignettes      | Available   |
+| Website        | Not started |
+| Video Tutorial | Not started |
 
 The **documentation** provides a comprehensive information for each
 function. To see it you could load the library and use the symbol `?`.
