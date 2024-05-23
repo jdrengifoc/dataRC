@@ -8,3 +8,4 @@
 ^R/deprecated
 ^R/in_development
 
+^README\.Rmd$
