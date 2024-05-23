@@ -32,7 +32,7 @@ At present, installation of the package is only supported from GitHub.
 devtools::install_github("jdrengifoc/dataRC")
 ```
 
-If you also like to install the vignettes (see [Usage](#Usage) section
+If you also like to install the vignettes (see [Usage](#usage) section
 for more details) use the following command. However, if you have
 already installed the dependencies feel free to delete
 `dependencies = TRUE,` or skip the updates when asked in `Console`.
@@ -44,8 +44,10 @@ devtools::install_github("jdrengifoc/dataRC", dependencies = TRUE, build_vignett
 
 ## Usage
 
-To learn of use all `dataRC`’s features we provide different kinds of
-study material as shown in the following table.
+To learn how to use all `dataRC`’s features we provide different kinds
+of study material as shown in the following table.
+
+<center>
 
 | Material       | Status      |
 |----------------|-------------|
@@ -55,6 +57,8 @@ study material as shown in the following table.
 | Website        | Not started |
 | Video Tutorial | Not started |
 
+</center>
+
 The **documentation** provides a comprehensive information for each
 function. To see it you could load the library and use the symbol `?`.
 
@@ -63,8 +67,8 @@ library(dataRC)
 ?convert_files
 ```
 
-The **README** lacks presentation since you are reading it, and you can
-find a simple usage example of three `dataRC`’s functions.
+The **README** lacks presentation since you are reading it. Here you can
+find a simple usage example of three `dataRC`’s functions!
 
 ``` r
 library(dataRC)
@@ -85,13 +89,13 @@ review.
 sort_partial_dictionary(dict_path, overwrite = T)
 ```
 
-By its part, *vignettes* are guides that show the workflow of full
-examples. In the future *vignettes* will be in the website, however,
-currently the only way to visualize them is in `RStudio`. If you have
-installed vignettes properly (see [Usage](#Instalation) section), you
-could list the names of all available vignettes with
-`vignette(package = 'dataRC')`. Once you know the name of the
-**vignette**, lets say `process_data_with_partial_dict`, use the
+By its part, ***vignettes*** are guides that showcase full examples of
+workflows. While in the future, they will be accessible through the
+website, currently, the only way to view them is in `RStudio`. If you
+have installed vignettes properly (see [Installation](#installation)
+section), you could list the names of all available vignettes with
+`vignette(package = 'dataRC')`. Once you have identified the name of the
+***vignettes***, lets say `process_data_with_partial_dict`, use the
 following command to visualize it. The **vignette** will render in the
 `help` pane.
 
