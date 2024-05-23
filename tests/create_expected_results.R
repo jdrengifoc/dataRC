@@ -14,8 +14,9 @@
 devtools::load_all()
 devtools::test()
 devtools::check()
-
+devtools::build_readme()
 devtools::document()
+
 
 
 

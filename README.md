@@ -6,45 +6,50 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of dataRC is to …
+`dataRC` is an R package designed to bring efficient data management
+technologies to everyone. It aims to enhance efficiency in data handling
+by providing easy-to-use tools for converting files to Apache Parquet
+format, unifying heterogeneous databases, providing templates for data
+processing and more. Whether you have little to none programming
+experience or are an advanced user, `dataRC` simplifies repetitive
+processes and boosts your productivity.
 
 ## Installation
 
-You can install the development version of dataRC from
-[GitHub](https://github.com/) with:
+At present, installation of the package is only supported from GitHub.
+However, as the package adheres to CRAN’s best practices, we anticipate
+its availability on CRAN in the near future.
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("jdrengifoc/dataRC")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
+## Usage
 
 ``` r
 library(dataRC)
-## basic example code
+
+# Convert all the .dta, .txt, and .csv files in the current folder into Parquet
+# format and store them in the folder ./parquet_files.
+# convert_files(
+#   folder = ".", files = list.files(pattern = '(dta|txt|csv)$'), 
+#   new_extension = "parquet", new_folder = '/parquet_files')
+
+# Create a partial dictionary to ease data homogenization without making
+# unexpected changes to original data.
+# dict_path <- 'dict.xlsx'
+# create_partial_dictionary(
+#   folder = '/parquet_files', files = list.files(), dict_path, verbose = F)
+# Add descriptive statistics and sort the partial dictionary for final manual
+# review.
+# sort_partial_dictionary(dict_path, overwrite = T)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+## Getting help
 
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+If you encounter a clear bug, please file an issue with a minimal
+reproducible example on
+[GitHub](https://github.com/jdrengifoc/dataRC/tree/main). If you don’t
+know how to do this or have a suggestion, please feel free to write an
+email to <jdrengifoc@eafit.edu.co>.
