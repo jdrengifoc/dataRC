@@ -47,7 +47,7 @@ devtools::install_github("jdrengifoc/dataRC", dependencies = TRUE, build_vignett
 To learn how to use all `dataRC`’s features we provide different kinds
 of study material as shown in the following table.
 
-<center>
+<div align="center">
 
 | Material       | Status      |
 |----------------|-------------|
@@ -57,7 +57,7 @@ of study material as shown in the following table.
 | Website        | Not started |
 | Video Tutorial | Not started |
 
-</center>
+</div>
 
 The **documentation** provides a comprehensive information for each
 function. To see it you could load the library and use the symbol `?`.
