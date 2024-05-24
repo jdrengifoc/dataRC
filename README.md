@@ -54,7 +54,7 @@ of study material as shown in the following table.
 | Documentation  | Complete    |
 | README         | Available   |
 | Vignettes      | Available   |
-| Website        | Not started |
+| Website        | Available   |
 | Video Tutorial | Not started |
 
 </div>
@@ -103,6 +103,10 @@ following command to visualize it. The **vignette** will render in the
 vignette('process_data_with_partial_dict', package = 'dataRC')
 #> Warning: vignette 'process_data_with_partial_dict' not found
 ```
+
+Finally, explore the complete project documentation, supplementary
+materials, and additional resources on the
+[website](https://jdrengifoc.github.io/dataRC/).
 
 ## Getting help
 
