@@ -3,7 +3,7 @@ pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
   process_data_with_partial_dict: process_data_with_partial_dict.html
-last_built: 2024-05-24T20:14Z
+last_built: 2024-05-24T21:03Z
 urls:
   reference: https://jdrengifoc.github.io/dataRC/reference
   article: https://jdrengifoc.github.io/dataRC/articles
