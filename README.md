@@ -6,6 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/jdrengifoc/dataRC/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jdrengifoc/dataRC/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/jdrengifoc/dataRC/graph/badge.svg?token=DKYSVJ8AU2)](https://codecov.io/gh/jdrengifoc/dataRC)
 <!-- badges: end -->
 
 `dataRC` is an R package designed to bring efficient data management
