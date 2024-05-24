@@ -8,4 +8,6 @@
 .quarto
 inst/doc
 R/deprecated
+R/in_development
 docs
+
