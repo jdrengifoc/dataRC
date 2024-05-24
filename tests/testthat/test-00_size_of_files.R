@@ -36,13 +36,13 @@ test_that("files_size and file_size: invalid unit value", {
 test_that("files_size: of test data", {
   files <- list.files(test_path('fixtures'), pattern = 'data1',
                       recursive = T, full.names = T) %>% rep(100)
-
+  # Function calculation.
   sizes <- c(files_size(files), files_size(files, 'kb'),
-             files_size(files, 'mb'), files_size(files, 'gb')) %>% round(4)
-
-  round_sizes <- c(1776600.0000, 1734.9609, 1.6943, 0.0017)
-  testthat::expect_equal(sizes, round_sizes, ignore_attr = TRUE,
-                         info = paste("File:", files, collapse = ","))
+             files_size(files, 'mb'), files_size(files, 'gb'))
+  # Actual values.
+  unit_coefficients <- 1024^c(bytes = 0, kb = 1, mb = 2, gb = 3)
+  actual_size <- (sum(file.info(files)$size) / unit_coefficients) %>% unname
+  testthat::expect_identical(sizes, actual_size)
 })
 
 
@@ -52,13 +52,14 @@ test_that("files_size: check the filenames and size are correct.", {
   files <- list.files(test_path('fixtures'), pattern = 'data1.*rds$',
                       recursive = T, full.names = T)
   unit_coefficients <- 1024^c(bytes = 0, kb = 1, mb = 2, gb = 3)
+  actual_size <- file.info(files)$size
 
   for (units in c('bytes', 'kb', 'mb', 'gb')) {
     df <- file_size(files, units) %>%
-      cbind(expected_size = c(2149, 1582, 2071) / unit_coefficients[[units]]) %>%
+      cbind(expected_size = actual_size / unit_coefficients[[units]]) %>%
       dplyr::mutate(test = size == expected_size)
-    testthat::expect_equal(df$filename, files)
-    testthat::expect_true(df$test %>% all)
+    testthat::expect_identical(df$filename, files)
+    testthat::expect_identical(df$size, df$expected_size)
   }
 })
 

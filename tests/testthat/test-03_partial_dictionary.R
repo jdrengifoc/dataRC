@@ -56,5 +56,6 @@ expect_equal(dim(dict) - c(0L, length(unicols) - 1L), dim(dict_class))
 unlink(dict_path)
 })
 
+# Delete .parquet test data.
 unlink(list.files(
   test_path('fixtures'), pattern = '^test_data1.\\.parquet$', full.names = T))

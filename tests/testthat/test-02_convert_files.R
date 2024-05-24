@@ -52,6 +52,7 @@ test_that("convert_files: convert a nested dataset", {
   unlink(new_folder, recursive = T)
 })
 
+# Delete .rds test data.
 unlink(list.files(
   test_path('fixtures'), pattern = '^test_data1.\\.rds$', full.names = T))
 
