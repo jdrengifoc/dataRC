@@ -4,6 +4,8 @@
 # dataRC <img src="man/figures/logo.png" align="right" height="138" /></a>
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/jdrengifoc/dataRC/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jdrengifoc/dataRC/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 `dataRC` is an R package designed to bring efficient data management

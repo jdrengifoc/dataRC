@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/jdrengifoc/dataRC/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jdrengifoc/dataRC/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 `dataRC` is an R package designed to bring efficient data management technologies to everyone. It aims to enhance efficiency in data handling by providing easy-to-use tools for converting files to Apache Parquet format, unifying heterogeneous databases, providing templates for data processing and more.  Whether you have little to none programming experience or are an advanced user, `dataRC` simplifies repetitive processes and boosts your productivity.
