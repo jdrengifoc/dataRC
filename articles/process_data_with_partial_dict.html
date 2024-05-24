@@ -104,21 +104,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># NVS data.</span></span>
-<span><span class="co"># library(dplyr)</span></span>
-<span><span class="co"># library(arrow)</span></span>
-<span><span class="co"># library(stringr)</span></span>
-<span><span class="co"># folder &lt;- '../../_Data/DANE_EEVV_anominizadas/Nofetales'</span></span>
-<span><span class="co"># files &lt;- list.files(folder, full.names = T)</span></span>
-<span><span class="co"># for (file in files) {</span></span>
-<span><span class="co">#   new_file &lt;- sprintf('inst/extdata/%s',</span></span>
-<span><span class="co">#                       str_split_i(file, '/', -1) %&gt;% str_replace('parquet', 'csv'))</span></span>
-<span><span class="co">#   df &lt;- read_parquet(file) %&gt;% slice(1:100)</span></span>
-<span><span class="co">#   write_fun('csv')(df, new_file)</span></span>
-<span><span class="co"># }</span></span>
-<span><span class="co"># rm(file, df)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
 <p>Lets consider a sample of the dataset of Nonfetal Vital Statistics
 (NVS), a public Colombian dataset that records all the deaths between
 1998 and 2022 of people born alive. This data is published by the
@@ -472,7 +458,7 @@ artificially change the <code>ANO</code> integer class to a character
 for the 2022 file.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">path_file_2022</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'%s/%s'</span>, <span class="va">folder</span>, <span class="va">files</span><span class="op">[</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">files</span>, <span class="st">'2022'</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/read_parquet.html" class="external-link">read_parquet</a></span><span class="op">(</span><span class="va">path_file_2022</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span><span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span><span class="va">path_file_2022</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ANO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">ANO</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://arrow.apache.org/docs/r/reference/write_parquet.html" class="external-link">write_parquet</a></span><span class="op">(</span><span class="va">path_file_2022</span><span class="op">)</span></span></code></pre></div>
 <p>Now, this is not a major problem, if we run the previous code we will
@@ -566,58 +552,6 @@ does not add to us more work.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 40 more rows</span></span></span></code></pre></div>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># END MODIFY. </span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># dict_path &lt;- sprintf('%s/dict_modified.xlsx', folder)</span></span>
-<span><span class="co"># dict &lt;- readxl::read_excel(dict_path) %&gt;%</span></span>
-<span><span class="co">#   dplyr::mutate(uniclass = tolower(uniclass))</span></span>
-<span><span class="co"># files &lt;- names(dict)[-(1L:4L)]</span></span>
-<span><span class="co"># SELECTED_COLUMNS &lt;- c('YEAR', 'ID', 'LOCATION')</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># df &lt;- NULL</span></span>
-<span><span class="co"># tic()</span></span>
-<span><span class="co"># for (file in files) {</span></span>
-<span><span class="co">#   sprintf('Began %s', file) %&gt;% cat</span></span>
-<span><span class="co">#   tic()</span></span>
-<span><span class="co">#   df_selected &lt;- dplyr::filter(dict, uniname %in% SELECTED_COLUMNS) %&gt;%</span></span>
-<span><span class="co">#     dplyr::select(uniname, uniclass, all_of(file)) %&gt;%</span></span>
-<span><span class="co">#     tidyr::drop_na(file) %&gt;%</span></span>
-<span><span class="co">#     base::replace(is.na(.), '')</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co">#   original_colnames &lt;- df_selected[[file]]</span></span>
-<span><span class="co">#   new_colnames &lt;- df_selected$uniname</span></span>
-<span><span class="co">#   new_classes &lt;- df_selected$uniclass</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co">#   df0 &lt;- arrow::open_dataset(sprintf('%s/%s', folder, file)) %&gt;%</span></span>
-<span><span class="co">#     dplyr::select(all_of(original_colnames)) %&gt;%</span></span>
-<span><span class="co">#     dplyr::rename_at(original_colnames, ~new_colnames) %&gt;%</span></span>
-<span><span class="co">#     # Lazy evaluation is picky, so if you have problematic values</span></span>
-<span><span class="co">#     # (e.g. "" to numeric), you will need to filter those observations or collect.</span></span>
-<span><span class="co">#     dplyr::mutate(</span></span>
-<span><span class="co">#       across(all_of(new_colnames[new_classes == 'numeric']), as.numeric),</span></span>
-<span><span class="co">#       across(all_of(new_colnames[new_classes == 'integer']), as.integer),</span></span>
-<span><span class="co">#       across(all_of(new_colnames[new_classes == 'date']), lubridate::ymd),</span></span>
-<span><span class="co">#       across(all_of(new_colnames[new_classes == 'logical']), as.logical)) %&gt;%</span></span>
-<span><span class="co">#     # Process data as required. Again lazy evaluation is picky and is still on</span></span>
-<span><span class="co">#     # develop to support more functions. Therefore, some features</span></span>
-<span><span class="co">#     # cannot be done in it, such as `dplyr::slice` or window functions. If this</span></span>
-<span><span class="co">#     # is the case you can collect and do the processing normally, however this</span></span>
-<span><span class="co">#     # could consume a lot of time, then you could  be creative and look for</span></span>
-<span><span class="co">#     # another way to achieve the objective. Nevertheless, one option is to</span></span>
-<span><span class="co">#     # employ the function `arrow::to_duckdb`, which allow you to use more</span></span>
-<span><span class="co">#     # function without increasing the time consumption.</span></span>
-<span><span class="co">#     arrow::to_duckdb() %&gt;%</span></span>
-<span><span class="co">#     dplyr::slice_sample(n = 10) %&gt;%</span></span>
-<span><span class="co">#     dplyr::group_by(ID) %&gt;%</span></span>
-<span><span class="co">#     dplyr::mutate(aux = max(LOCATION, ID)) %&gt;% collect</span></span>
-<span><span class="co">#   # If all columns are going to have the same columns is recommended to use</span></span>
-<span><span class="co">#   #`rbind.`</span></span>
-<span><span class="co">#   df &lt;- dplyr::bind_rows(df, df0)</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co">#   sprintf('\n\tCompleted in %f sec.\n', get_values_tic_msg()) %&gt;% cat</span></span>
-<span><span class="co"># }</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># sprintf('\nThe process was completed in %f min.',</span></span>
-<span>        <span class="co"># get_values_tic_msg(unit = 'min')) %&gt;% cat</span></span></code></pre></div>
   </main>
 </div>
 
