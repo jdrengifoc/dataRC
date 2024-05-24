@@ -2,7 +2,7 @@
 title: "Process data with a partial dictionary"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{process_data_with_partial_dict}
+  %\VignetteIndexEntry{Process data with a partial dictionary}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,20 +21,6 @@ library(testthat)
 library(arrow)
 library(dplyr)
 library(stringr)
-
-# NVS data.
-# library(dplyr)
-# library(arrow)
-# library(stringr)
-# folder <- '../../_Data/DANE_EEVV_anominizadas/Nofetales'
-# files <- list.files(folder, full.names = T)
-# for (file in files) {
-#   new_file <- sprintf('inst/extdata/%s',
-#                       str_split_i(file, '/', -1) %>% str_replace('parquet', 'csv'))
-#   df <- read_parquet(file) %>% slice(1:100)
-#   write_fun('csv')(df, new_file)
-# }
-# rm(file, df)
 ```
 Lets consider a sample of the dataset of Nonfetal Vital Statistics (NVS), a  public Colombian dataset that records all the deaths between 1998 and 2022 of people born alive. This data is published by the Colombian National Administrative Department of Statistics (DANE by its spanish acronym) in its [website](https://www.dane.gov.co/index.php/estadisticas-por-tema/salud/nacimientos-y-defunciones), such that each year can be downloaded in traditional formats (sav, txt, csv, dta). The number of variables per year ranges from 48 to 69, while the number of rows can reach up to 363,089. 
 
@@ -201,7 +187,7 @@ df %>% group_by(ANO) %>% mutate(prop_ = n_ / sum(n_))
 But what if the per `uniname` the variable have different classes per file. Well, we need a small extra step. To see this lets artificially change the `ANO` integer class to a character for the 2022 file.
 ```{r}
 path_file_2022 <- sprintf('%s/%s', folder, files[stringr::str_detect(files, '2022')])
-read_parquet(path_file_2022) %>% 
+arrow::open_dataset(path_file_2022) %>% 
   mutate(ANO = as.character(ANO)) %>% 
   write_parquet(path_file_2022)
 ```
@@ -272,7 +258,7 @@ df %>% group_by(ANO) %>% mutate(prop_ = n_ / sum(n_))
 # END MODIFY. 
 ```
 
-```{r}
+```{r, include=FALSE}
 # dict_path <- sprintf('%s/dict_modified.xlsx', folder)
 # dict <- readxl::read_excel(dict_path) %>%
 #   dplyr::mutate(uniclass = tolower(uniclass))
