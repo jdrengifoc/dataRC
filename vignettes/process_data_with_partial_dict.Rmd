@@ -1,5 +1,5 @@
 ---
-title: "process_data_with_partial_dict"
+title: "Process data with a partial dictionary"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{process_data_with_partial_dict}
