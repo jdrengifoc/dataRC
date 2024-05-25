@@ -16,9 +16,11 @@ test_that("find_stata_tempdir", {
   if (os_type == "Windows") {
     Sys.setenv(TEMP = mock_temp_path)
     testthat::expect_identical(find_stata_tempdir(), mock_temp_path)
+
   } else if (os_type == "Darwin" || os_type == "Linux") {
     Sys.setenv(TMPDIR = mock_temp_path)
     testthat::expect_identical(find_stata_tempdir(), mock_temp_path)
+
   } else {
     testthat::expect_error(find_stata_tempdir())
   }
@@ -49,8 +51,10 @@ test_that("delete_stata_temps", {
   os_type <- Sys.info()[['sysname']]
   if (os_type == "Windows") {
     temp_files <- c('ST_07000001.tmp', 'STi04000007.tmp', 'STG03000024.tmp')
+
   } else if (os_type == "Darwin" || os_type == "Linux") {
     temp_files <- c('SQ31382.000001', 'Si31618.000005', 'SW31618.000357')
+
   } else {
     testthat::expect_error(delete_stata_temps())
   }

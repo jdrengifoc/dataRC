@@ -1,23 +1,30 @@
 test_that("write_fun + read_fun: check for all supported extensions.", {
-
-  filename <- test_path('fixtures') %>% paste0('/test_data1a.rds')
+  # Test supported extensions.
+  filename <- file.path(test_path('fixtures'), 'test_data1a.rds')
   df <- readRDS(filename)
   # Case robustness.
-  supported_extensions <- c("parquet", "feather", "xlSX", "cSv", 'txt',
-                            "sas", "rds", "RDATA")
+  extensions <- c("parquet", "feather", "xlSX", "cSv", 'txt', 'dta', "sas",
+                  "rds", "RDATA")
 
-  for (extension in supported_extensions) {
+  for (extension in extensions) {
     # Write data to file
     tmp_file <- tempfile(fileext = paste0(".", extension))
     write_fun(extension)(df, tmp_file)
     read_data <- read_fun(extension)(tmp_file) %>% as.data.frame
-
-    testthat::expect_equal(read_data, df,
-                     info = paste("Extension:", extension))
-
+    if (extension == 'dta') {
+      expect_contains(read_data, df)
+    } else {
+      testthat::expect_equal(
+        read_data, df, info = paste("Extension:", extension))
+    }
     # Delete temporary file
     unlink(tmp_file)
   }
+
+  # Test Invalid extension.
+  invalid_extension <- 'yml'
+  testthat::expect_error(write_fun(invalid_extension))
+  testthat::expect_error(read_fun(invalid_extension))
 })
 
 test_that("convert_files: convert a nested dataset", {
