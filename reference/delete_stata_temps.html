@@ -54,14 +54,27 @@ files deleted along with the cleared disk space.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">delete_stata_temps</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">delete_stata_temps</span><span class="op">(</span>temp_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
+    <dl><dt>temp_dir</dt>
+<dd><p>Optional. The directory to search for Stata temporary files.
+If <code>NULL</code> (the default value), the function will attempt to find the Stata
+temporary directory with the aid of <code><a href="find_stata_tempdir.html">find_stata_tempdir()</a></code>.</p></dd>
+
+</dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
 <p>None.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <p>WARNING! Do not run while using Stata, as it may delete a temporary
+file currently employed.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -72,6 +85,9 @@ files deleted along with the cleared disk space.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="fu">delete_stata_temps</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># You can specify the directory where Stata stores the temporary files</span></span></span>
+<span class="r-in"><span><span class="co"># explicitly.</span></span></span>
+<span class="r-in"><span><span class="fu">delete_stata_temps</span><span class="op">(</span><span class="st">"/path/to/tempdir"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
