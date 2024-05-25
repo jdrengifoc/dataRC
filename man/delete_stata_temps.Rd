@@ -4,7 +4,12 @@
 \alias{delete_stata_temps}
 \title{Delete Stata temporary files}
 \usage{
-delete_stata_temps()
+delete_stata_temps(temp_dir = NULL)
+}
+\arguments{
+\item{temp_dir}{Optional. The directory to search for Stata temporary files.
+If \code{NULL} (the default value), the function will attempt to find the Stata
+temporary directory with the aid of \code{\link[=find_stata_tempdir]{find_stata_tempdir()}}.}
 }
 \value{
 None.
@@ -14,9 +19,16 @@ The function identifies Stata temporary files based on their naming
 convention. It then deletes the identified files and prints the number of
 files deleted along with the cleared disk space.
 }
+\note{
+WARNING! Do not run while using Stata, as it may delete a temporary
+file currently employed.
+}
 \examples{
 \dontrun{
 delete_stata_temps()
+# You can specify the directory where Stata stores the temporary files
+# explicitly.
+delete_stata_temps("/path/to/tempdir")
 }
 }
 \seealso{

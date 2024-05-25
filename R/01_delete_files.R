@@ -1,34 +1,90 @@
+#' Find Stata Temporary Directory
+#'
+#' This function attempts to find the directory where Stata stores its temporary
+#' files. It checks the `STATATMP` environment variable first, since is used to
+#' modify predefined temporary files. If `STATATMP` doesn't exists, it falls
+#' back to `TEMP` on Windows or `TMPDIR` on Linux/Unix.
+#' @returns A string representing the path to the Stata temporary directory.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' find_stata_tempdir()
+#' }
+#' @seealso [Using the STATATMP environment
+#'   variable](https://www.stata.com/support/faqs/data-management/statatmp-environment-variable/#)
+#'
+find_stata_tempdir <- function() {
+  temp_dir <- Sys.getenv("STATATMP", unset = NA)
+
+  if (!is.na(temp_dir)) {
+    return(temp_dir)
+  }
+
+  os_type <- Sys.info()[['sysname']]
+
+  if (os_type == "Windows") {
+    temp_dir <- Sys.getenv("TEMP", unset = NA)
+  } else if (os_type == "Darwin" || os_type == "Linux") {
+    temp_dir <- Sys.getenv("TMPDIR", unset = NA)
+  } else {
+    stop("Unsupported operating system.")
+  }
+
+  if (is.na(temp_dir)) {
+    stop("Could not locate Stata temporary directory.")
+  }
+
+  return(temp_dir)
+}
+
 #' Delete Stata temporary files
 #'
 #' The function identifies Stata temporary files based on their naming
 #' convention. It then deletes the identified files and prints the number of
 #' files deleted along with the cleared disk space.
+#' @param temp_dir Optional. The directory to search for Stata temporary files.
+#'   If `NULL` (the default value), the function will attempt to find the Stata
+#'   temporary directory with the aid of [find_stata_tempdir()].
 #' @returns None.
-#' @importFrom stringr str_split_1
+#' @note WARNING! Do not run while using Stata, as it may delete a temporary
+#'   file currently employed.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' delete_stata_temps()
+#' # You can specify the directory where Stata stores the temporary files
+#' # explicitly.
+#' delete_stata_temps("/path/to/tempdir")
 #' }
 #' @seealso [Stata temporary files
 #'   FAQ](https://www.stata.com/statalist/archive/2004-01/msg00542.html)
-delete_stata_temps <- function() {
+delete_stata_temps <- function(temp_dir = NULL) {
   # Get the temporary folder
-  temp_folder <- paste(
-    rev(rev(stringr::str_split_1(tempdir(), pattern = '/|\\\\'))[-1L]),
-    collapse = '/')
+  if (is.null(temp_dir)) {
+    temp_dir <- find_stata_tempdir()
+  }
 
   # Identify Stata temporary files
-  temps <- list.files(temp_folder, pattern = 'ST(D|G|H|i|J|Q|_|W).*tmp', full.names = TRUE)
+  os_type <- Sys.info()[['sysname']]
+  if (os_type == "Windows") {
+    temps <- list.files(
+      temp_dir, pattern = '^ST(D|G|H|i|J|Q|_|W).*\\.tmp$', full.names = TRUE)
+  } else if (os_type == "Darwin" || os_type == "Linux") {
+    temps <- list.files(
+      temp_dir, pattern = '^S(D|G|H|i|J|P|Q|t|W).*\\.\\d+$', full.names = TRUE)
+  } else {
+    stop("Unsupported operating system.")
+  }
 
-  # Delete Stata temporary files
-  deleted_size <- files_size(temps, units = 'gb')
-  file.remove(temps)
+  # Delete Stata temporary files.
+  deleted_size <- files_size(temps, units = 'mb')
+  unlink(temps)
 
-  # Print the result
+  # Print the result.
   message(
-    paste('Deleted', length(temps), 'files clearing', deleted_size, 'GB!\n')
+    paste('Deleted', length(temps), 'files clearing', deleted_size, 'MB!\n')
     )
 }
 
