@@ -1,4 +1,5 @@
 ### IDEAS / TO DEVELOP
+#'
 #' * UPDATE DICTS WITH NEW DATA.
 #'
 #' * ADD A CUSTOM UNINAME FUNCTION.
@@ -24,6 +25,12 @@
 #' * ROBUST LAZY LEFT JOIN
 #'
 #' * Add verbose parameter for partitions.
+#'
+#' * DUPLICATES FUNCTION
+#'
+#' * Visualization dashboard?
+#'
+#' * DataPrep (identify categories, visualize data)
 
 
 

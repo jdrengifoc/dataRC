@@ -10,4 +10,7 @@ inst/doc
 R/deprecated
 R/in_development
 docs
-
+# First release
+NEWS.md
+cran-comments.md
+./R/in_development/

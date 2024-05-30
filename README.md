@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/jdrengifoc/dataRC/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jdrengifoc/dataRC/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/jdrengifoc/dataRC/graph/badge.svg?token=DKYSVJ8AU2)](https://codecov.io/gh/jdrengifoc/dataRC)
+[![codecov](https://codecov.io/gh/jdrengifoc/dataRC/graph/badge.svg?token=DKYSVJ8AU2)](https://app.codecov.io/gh/jdrengifoc/dataRC)
 <!-- badges: end -->
 
 `dataRC` is an R package designed to bring efficient data management
@@ -20,11 +20,11 @@ processes and boosts your productivity.
 **Note:** dataRC has been released in its most basic form, but several
 features are currently inactive or under development. This includes
 supplementary materials such as vignettes, website and tutorials, which
-will be added in future updates. Additionally, we are in the process of
-preparing the package for submission to CRAN to ensure broader
-accessibility and stability for users. Thank you for your patience as we
-continue to improve and expand `dataRC` to meet your data management
-needs.
+will be completed/added in future updates. Additionally, we are in the
+process of preparing the package for submission to CRAN to ensure
+broader accessibility and stability for users. Thank you for your
+patience as we continue to improve and expand `dataRC` to meet your data
+management needs.
 
 ## Installation
 
@@ -93,10 +93,11 @@ sort_partial_dictionary(dict_path, overwrite = T)
 ```
 
 By its part, ***vignettes*** are guides that showcase full examples of
-workflows. While in the future, they will be accessible through the
-website, currently, the only way to view them is in `RStudio`. If you
-have installed vignettes properly (see [Installation](#installation)
-section), you could list the names of all available vignettes with
+workflows. They can be access through the
+[website](https://jdrengifoc.github.io/dataRC/) or directly in
+`RStudio`. For the latter you need to install vignettes properly (see
+[Installation](#installation) section). Once this is done you could list
+the names of all available vignettes with
 `vignette(package = 'dataRC')`. Once you have identified the name of the
 ***vignettes***, lets say `process_data_with_partial_dict`, use the
 following command to visualize it. The **vignette** will render in the

@@ -1,11 +1,11 @@
 Package: dataRC
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 1.0
+Title: A Toolkit for an Efficient Data Manipulation in R
+Version: 1.0.0
 Authors@R: c(
     person("Juan David ", "Rengifo-Castro", email = "jdrengifoc13@gmail.com", 
-    role = c("cre", "aut", "fnd"), comment = c(ORCID = "0009-0004-5169-4484")))
-Maintainer: The package maintainer <jdrengifoc13@gmail.com>
+    role = c("cre", "aut", "fnd", "cph"), comment = c(ORCID = "0009-0004-5169-4484")))
+Maintainer: Juan David Rengifo-Castro <jdrengifoc13@gmail.com>
 Description: This library aims to provide tools for efficient data processing. Designed to assist a wide range of users, including beginners and advanced users alike, it incorporates advanced techniques while remaining accessible to those new to the field. Additionally, it simplifies repetitive tasks for more experienced users.
 License: Apache License (== 2.0)
 Encoding: UTF-8
