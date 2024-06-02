@@ -174,10 +174,16 @@ write_fun <- function(extension, ...) {
 #' # Convert files in the current directory to Parquet format
 #' convert_files(folder = ".", files = list.files(), new_extension = "parquet")
 #' }
-convert_files <- function(folder, files, new_extension = 'parquet',
-                          new_folder = NULL, verbose = TRUE) {
+convert_files <- function(
+    folder = '.', files = NULL,
+    new_extension = 'parquet', new_folder = NULL, verbose = TRUE) {
   # Robust to uppercase and dots.
   new_extension <- tolower(gsub('\\.', '', new_extension))
+  # By default, `files` will be all the files (include recursive ones and
+  # exclude dirs) inside the `folder`.
+  if ( is.null(files) ) {
+    files <- list.files(folder, recursive = T)
+  }
 
   # If not provided, the `new_folder` put the new folder inside the original
   # folder with the same name.

@@ -31,6 +31,11 @@
 #' * Visualization dashboard?
 #'
 #' * DataPrep (identify categories, visualize data)
+#'
+#' * BANREP - Juan Sebastian
+#' Organizar los paths entre diferentes equipos con diferentes encoders.
+#'
+#' * Nico - Leer xlsx sin encabezados.
 
 
 

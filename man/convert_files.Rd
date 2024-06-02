@@ -5,8 +5,8 @@
 \title{Modify multiple files to a specified format}
 \usage{
 convert_files(
-  folder,
-  files,
+  folder = ".",
+  files = NULL,
   new_extension = "parquet",
   new_folder = NULL,
   verbose = TRUE
