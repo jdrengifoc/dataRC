@@ -23,5 +23,5 @@ number in the second vector (\code{post}) for each element in the first vector
 prev <- c(1, 3, 5)
 post <- c(2, 4, 6, 7)
 get_next_consecutives(prev, post)
-Output: 2, 4, 6.
+# Output: 2, 4, 6.
 }

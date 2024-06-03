@@ -196,7 +196,7 @@ n_digits_int <- function(x) {
 #' prev <- c(1, 3, 5)
 #' post <- c(2, 4, 6, 7)
 #' get_next_consecutives(prev, post)
-#' Output: 2, 4, 6.
+#' # Output: 2, 4, 6.
 #' @export
 get_next_consecutives <- function(prev, post) {
   post <- post[post > min(prev)]
