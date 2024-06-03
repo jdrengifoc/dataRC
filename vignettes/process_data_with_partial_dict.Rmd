@@ -7,21 +7,26 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-```
 
-```{r setup}
 library(dataRC)
-library(testthat)
-
 library(arrow)
 library(dplyr)
 library(stringr)
 ```
+
+First and foremost, for this vignette we need to install and load the following libraries.
+```{r setup, include=TRUE, eval=FALSE}
+library(dataRC)
+library(arrow)
+library(dplyr)
+library(stringr)
+```
+
 Lets consider a sample of the dataset of Nonfetal Vital Statistics (NVS), a  public Colombian dataset that records all the deaths between 1998 and 2022 of people born alive. This data is published by the Colombian National Administrative Department of Statistics (DANE by its spanish acronym) in its [website](https://www.dane.gov.co/index.php/estadisticas-por-tema/salud/nacimientos-y-defunciones), such that each year can be downloaded in traditional formats (sav, txt, csv, dta). The number of variables per year ranges from 48 to 69, while the number of rows can reach up to 363,089. 
 
 For this vignette I sampled 100 rows for each year (each row records a death). Of course such small sample do not demand significant computational resources. However, in its original form, this dataset requires more than 2GB of storage, demand that is reduced to 123.8 MB by converting the files to parquet format. This efficiency gain can be easily replicated with the function `convert_files()`, as is shown in the next chunk of code.
@@ -49,10 +54,10 @@ files <- list.files(folder, pattern = '^nofetal\\d{4}\\.parquet$')
 
 # Get the number of columns per year.
 cols_per_year <- sapply(files, function(file) arrow::open_dataset(
-  sprintf('%s/%s', folder, file)) %>% ncol) %>% unlist %>% unname
+  file.path(folder, file)) %>% ncol) %>% unlist %>% unname
 # Get the number of columns per year and column classes.
 classes_per_year <- sapply(files, function(x) arrow::read_parquet(
-  sprintf('%s/%s', folder, x)) %>% sapply(class) %>% table) 
+  file.path(folder, x)) %>% sapply(class) %>% table) 
 character_per_year <- sapply(classes_per_year, 
                              function(x) {
                                x <- x[names(x) == 'character']
@@ -88,11 +93,11 @@ data.frame(year = 1998:2022, n_vars= cols_per_year,
 Besides, the number of unique variable names for all years is 145, despite there whole majority of columns is common across years.
 ```{r}
 sapply(files, function(file) arrow::open_dataset(
-    sprintf('%s/%s', folder, file)) %>% names) %>% unlist %>% unname %>% unique %>% length
+    file.path(folder, file)) %>% names) %>% unlist %>% unname %>% unique %>% length
 ```
 These kind of problematic scenarios are suitable for the functions `create_partial_dictionary()` and `sort_partial_dictionary()`, which create a "partial" dictionary that ease the process of unify the data.
 ```{r}
-dict_path <- sprintf('%s/dict.xlsx', folder)
+dict_path <- file.path(folder, 'dict.xlsx')
 unlink(dict_path)
 create_partial_dictionary(folder, files, dict_path, verbose = F)
 sort_partial_dictionary(dict_path, overwrite = T)
@@ -160,7 +165,7 @@ for (file in files) {
   
   # Open file with lazy evaluation for speed (you could also use
   # `read_parquet()`).
-  df0 <- arrow::open_dataset(sprintf('%s/%s', folder, file)) %>%
+  df0 <- arrow::open_dataset(file.path(folder, file)) %>%
     # Select `SELECTED_COLUMNS` and rename it with the `uniname`.
     dplyr::select(all_of(original_colnames)) %>%
     dplyr::rename_at(original_colnames, ~new_colnames) %>% 
@@ -186,7 +191,7 @@ df %>% group_by(ANO) %>% mutate(prop_ = n_ / sum(n_))
 ```
 But what if the per `uniname` the variable have different classes per file. Well, we need a small extra step. To see this lets artificially change the `ANO` integer class to a character for the 2022 file.
 ```{r}
-path_file_2022 <- sprintf('%s/%s', folder, files[stringr::str_detect(files, '2022')])
+path_file_2022 <- file.path(folder, files[stringr::str_detect(files, '2022')])
 arrow::open_dataset(path_file_2022) %>% 
   mutate(ANO = as.character(ANO)) %>% 
   write_parquet(path_file_2022)
@@ -207,7 +212,7 @@ for (file in files) {
   # always like that so you could copy and paste freely).
   df_selected <- dict %>% 
     dplyr::filter(uniname %in% SELECTED_COLUMNS) %>%
-    dplyr::select(uniname, uniclass, all_of(file)) %>%
+    dplyr::select(uniname, uniclass, dplyr::all_of(file)) %>%
     tidyr::drop_na(file) %>%
     base::replace(is.na(.), '')
   original_colnames <- df_selected[[file]]
@@ -216,7 +221,7 @@ for (file in files) {
   
   # Open file with lazy evaluation for speed (you could also use
   # `read_parquet()`).
-  df0 <- arrow::open_dataset(sprintf('%s/%s', folder, file)) %>%
+  df0 <- arrow::open_dataset(file.path(folder, file)) %>%
     # Select `SELECTED_COLUMNS` and rename it with the `uniname`.
     dplyr::select(all_of(original_colnames)) %>%
     dplyr::rename_at(original_colnames, ~new_colnames) %>% 
