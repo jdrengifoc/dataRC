@@ -89,17 +89,33 @@ location. The dictionary has the following columns:</p><ul><li><p><code>uniname<
 files identical case robust variable names.</p></li>
 <li><p><code>uniclass</code>: Empty column that is intended to be filled manually by the
 user with the unifying class for each variable. Theoretically, this could
-be filled with any value, however, based on the template in
-<code>vignette('vignettes/process_data_with_partial_dict.Rmd')</code> is recommended
-to use <code>'integer'</code>, <code>'numeric'</code>, <code>'character'</code>, <code>'date'</code> and <code>'logical'</code>.</p></li>
+be filled with any value, however, is recommended to use supported values
+by <code><a href="unify_classes.html">unify_classes()</a></code>, as is intended to be used with this function.</p></li>
 <li><p><code>coverage</code>: The percentage of files that have a match with the <code>uniname</code>.</p></li>
 <li><p><code>class_mode</code>: The class mode per <code>uniname</code> computed with
 <code><a href="get_mode.html">get_mode()</a></code>.</p></li>
 <li><p><code>unique_classes</code>: All the classes per <code>uniname</code>.</p></li>
+<li><p>One column per file named as the file itself, excluding the folder path.
+Using only the file name ensures that the dictionary remains valid even if
+the dataset is moved to a different location, as long as the file structure
+is preserved.</p></li>
 </ul></div>
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>After the creation of the dictionary, the user must manually valida
+the <code>uniname</code> suggestions and make the necessary changes. Besides, the user
+must complete the <code>uniclass</code> column with supported values by
+<code><a href="unify_classes.html">unify_classes()</a></code>. After this, is recommended to use the functions
+<code><a href="unify_colnames.html">unify_colnames()</a></code>, <code><a href="unify_classes.html">unify_classes()</a></code> and
+<code><a href="relocate_columns.html">relocate_columns()</a></code> for an efficient data processing.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>See <code><a href="../articles/process_data_with_partial_dict.html">vignette('process_data_with_partial_dict', package = 'dataRC')</a></code> for a full example.</p></div>
+    <div class="dont-index"><p>For a full example, see the vignette
+<code>process_data_with_partial_dict</code> in the
+<a href="https://jdrengifoc.github.io/dataRC/articles/process_data_with_partial_dict.html">website</a>
+or with the command
+<code>vignette('process_data_with_partial_dict', package = dataRC')</code>.</p></div>
     </div>
 
     <div class="section level2">

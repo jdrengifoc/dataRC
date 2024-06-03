@@ -94,28 +94,30 @@ dictionaries.</p></dd>
 
 
 <dt>verbose</dt>
-<dd><p>A boolean (the default is <code>TRUE</code>) indicating whether to display
-progress messages.</p></dd>
+<dd><p>A boolean (the default is <code>TRUE</code>) indicating whether to
+display progress messages.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>None. The function saves the raw partial dictionary as an Excel file.</p>
+<p>None. The function saves the raw partial dictionary as an Excel
+file.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function extracts the column names and classes (data types) from
-each file, and stores them in a dictionary saved as an Excel file with two
-sheets (one for the names and other for the classes). This raw dictionary
-lacks polish and is almost useless in this form, then is highly recommended
-to refine it. The function <code><a href="sort_partial_dictionary.html">sort_partial_dictionary()</a></code> accomplished
-this job. So, Why don't merge both functions in the first place? Well, there
-are at least two reasons. First, the creation of this preliminary partial
-dictionary is potentially time demanding, so by splitting the process we
-guarantee that an error in the refinement does not affect the heavy work.
-Second, allows the user to elaborate a custom processing.</p>
+    <p>This function extracts the column names and classes (data types)
+from each file, and stores them in a dictionary saved as an Excel file with
+two sheets (one for the names and other for the classes). This raw
+dictionary lacks polish and is almost useless in this form, then is highly
+recommended to refine it. The function <code><a href="sort_partial_dictionary.html">sort_partial_dictionary()</a></code>
+accomplished this job. So, Why don't merge both functions in the first
+place? Well, there are at least two reasons. First, the creation of this
+preliminary partial dictionary is potentially time demanding, so by
+splitting the process we guarantee that an error in the refinement does not
+affect the heavy work. Second, allows the user to elaborate a custom
+processing.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
@@ -124,13 +126,16 @@ between speed and certainty that the class is properly inferred. If your
 data is small or you do not have a hurry, you could replace it by <code>Inf</code>.
 However, even with a small value of 100 I have not experience any problem
 with hundreds of files with millions of observations and tens of variables.
-Is important to have all the data files in a common folder (root folder). Of
-course it may be partitioned in sub-folders.</p>
+Is important to have all the data files in a common folder (root folder).
+Of course it may be partitioned in sub-folders.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>See <code><a href="../articles/process_data_with_partial_dict.html">vignette('process_data_with_partial_dict', package = 'dataRC')</a></code>
-for a full example.</p></div>
+    <div class="dont-index"><p>For a full example, see the vignette
+<code>process_data_with_partial_dict</code> in the
+<a href="https://jdrengifoc.github.io/dataRC/articles/process_data_with_partial_dict.html">website</a>
+or with the command
+<code>vignette('process_data_with_partial_dict', package = dataRC')</code>.</p></div>
     </div>
 
     <div class="section level2">

@@ -77,34 +77,13 @@
 
     
     
+<p>First and foremost, for this vignette we need to install and load the
+following libraries.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jdrengifoc.github.io/dataRC/">dataRC</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://testthat.r-lib.org" class="external-link">testthat</a></span><span class="op">)</span></span>
-<span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/apache/arrow/" class="external-link">arrow</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'arrow'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:testthat':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     matches</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:utils':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     timestamp</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:testthat':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     matches</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     filter, lag</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
 <p>Lets consider a sample of the dataset of Nonfetal Vital Statistics
 (NVS), a public Colombian dataset that records all the deaths between
 1998 and 2022 of people born alive. This data is published by the
@@ -120,7 +99,7 @@ requires more than 2GB of storage, demand that is reduced to 123.8 MB by
 converting the files to parquet format. This efficiency gain can be
 easily replicated with the function <code><a href="../reference/convert_files.html">convert_files()</a></code>, as is
 shown in the next chunk of code.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Folder where is stored the data.</span></span>
 <span><span class="va">folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata'</span>, package <span class="op">=</span> <span class="st">'dataRC'</span><span class="op">)</span></span>
 <span><span class="co"># The files to convert are all the ones that began with "nofetal", have a four </span></span>
@@ -141,16 +120,16 @@ For instance, the table below shows that the number of variables per
 year has changes drastically across the years, and even for the years
 with same number of variables, the number of columns per datatype
 differ.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The new parquet files.</span></span>
 <span><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">folder</span>, pattern <span class="op">=</span> <span class="st">'^nofetal\\d{4}\\.parquet$'</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="co"># Get the number of columns per year.</span></span>
 <span><span class="va">cols_per_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">file</span><span class="op">)</span> <span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'%s/%s'</span>, <span class="va">folder</span>, <span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">ncol</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">unlist</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">unname</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">folder</span>, <span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">ncol</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">unlist</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">unname</span></span>
 <span><span class="co"># Get the number of columns per year and column classes.</span></span>
 <span><span class="va">classes_per_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/read_parquet.html" class="external-link">read_parquet</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'%s/%s'</span>, <span class="va">folder</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">table</span><span class="op">)</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">folder</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">table</span><span class="op">)</span> </span>
 <span><span class="va">character_per_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">classes_per_year</span>, </span>
 <span>                             <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>                               <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">==</span> <span class="st">'character'</span><span class="op">]</span></span>
@@ -210,37 +189,37 @@ differ.</p>
 <span><span class="co">#&gt; 25 2022     57              4           40           13            0</span></span></code></pre></div>
 <p>Besides, the number of unique variable names for all years is 145,
 despite there whole majority of columns is common across years.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">file</span><span class="op">)</span> <span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'%s/%s'</span>, <span class="va">folder</span>, <span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">names</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">unlist</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">unname</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">unique</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">length</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">folder</span>, <span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">names</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">unlist</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">unname</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">unique</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">length</span></span>
 <span><span class="co">#&gt; [1] 145</span></span></code></pre></div>
 <p>These kind of problematic scenarios are suitable for the functions
 <code><a href="../reference/create_partial_dictionary.html">create_partial_dictionary()</a></code> and
 <code><a href="../reference/sort_partial_dictionary.html">sort_partial_dictionary()</a></code>, which create a “partial”
 dictionary that ease the process of unify the data.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dict_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'%s/dict.xlsx'</span>, <span class="va">folder</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dict_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">folder</span>, <span class="st">'dict.xlsx'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">dict_path</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/create_partial_dictionary.html">create_partial_dictionary</a></span><span class="op">(</span><span class="va">folder</span>, <span class="va">files</span>, <span class="va">dict_path</span>, verbose <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/sort_partial_dictionary.html">sort_partial_dictionary</a></span><span class="op">(</span><span class="va">dict_path</span>, overwrite <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Save sorted dictionary in /home/runner/.cache/R/renv/library/dataRC-f4d37bc5/R-4.4/x86_64-pc-linux-gnu/dataRC/extdata/dict.xlsx.</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">dict</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="va">dict_path</span>, sheet <span class="op">=</span> <span class="st">'colname'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">print</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 75 × 30</span></span></span>
-<span><span class="co">#&gt;    uniname   uniclass class_mode unique_classes   coverage nofetal1998.parquet</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> A_DEFUN   <span style="color: #BB0000;">NA</span>       integer    integer               100 a_defun            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ANO       <span style="color: #BB0000;">NA</span>       integer    integer               100 ano                </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> AREA_RES  <span style="color: #BB0000;">NA</span>       integer    integer               100 area_res           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ASIS_MED  <span style="color: #BB0000;">NA</span>       integer    integer               100 asis_med           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> C_BAS1    <span style="color: #BB0000;">NA</span>       character  character             100 c_bas1             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> C_MUERTE  <span style="color: #BB0000;">NA</span>       integer    integer; logical      100 c_muerte           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CAU_HOMOL <span style="color: #BB0000;">NA</span>       integer    integer               100 cau_homol          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> COD_DPTO  <span style="color: #BB0000;">NA</span>       integer    integer               100 cod_dpto           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> COD_MUNIC <span style="color: #BB0000;">NA</span>       integer    integer               100 cod_munic          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CODMUNOC  <span style="color: #BB0000;">NA</span>       integer    logical; integer      100 codmunoc           </span></span>
+<span><span class="co">#&gt;    uniname   uniclass  class_mode unique_classes   coverage nofetal1998.parquet</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> A_DEFUN   integer   integer    integer               100 a_defun            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ANO       integer   integer    integer               100 ano                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> AREA_RES  integer   integer    integer               100 area_res           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ASIS_MED  integer   integer    integer               100 asis_med           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> C_BAS1    character character  character             100 c_bas1             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> C_MUERTE  <span style="color: #BB0000;">NA</span>        integer    integer; logical      100 c_muerte           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CAU_HOMOL integer   integer    integer               100 cau_homol          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> COD_DPTO  integer   integer    integer               100 cod_dpto           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> COD_MUNIC integer   integer    integer               100 cod_munic          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CODMUNOC  <span style="color: #BB0000;">NA</span>        integer    logical; integer      100 codmunoc           </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 65 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 24 more variables: nofetal1999.parquet &lt;chr&gt;, nofetal2000.parquet &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   nofetal2001.parquet &lt;chr&gt;, nofetal2002.parquet &lt;chr&gt;,</span></span></span>
@@ -248,7 +227,7 @@ dictionary that ease the process of unify the data.</p>
 <span><span class="co">#&gt; <span style="color: #949494;">#   nofetal2005.parquet &lt;chr&gt;, nofetal2006.parquet &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   nofetal2007.parquet &lt;chr&gt;, nofetal2008.parquet &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   nofetal2009.parquet &lt;chr&gt;, nofetal2010.parquet &lt;chr&gt;, …</span></span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">dict_path</span><span class="op">)</span></span></code></pre></div>
 <p>This could be done easily with the previous chunk of code, which
 writes a xlsx file with two sheets: <code>colnames</code> and
@@ -288,13 +267,13 @@ each file so no manual work must be done. However,
 <code>IDADMISALUD</code> (2008-2011 and 2014-2022) and
 <code>IDADMISALU</code> (2012-2013) could be joined in one
 <code>uniname</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dict</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">uniname</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'IDADMISALUD'</span>, <span class="st">'IDADMISALU'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 30</span></span></span>
 <span><span class="co">#&gt;   uniname     uniclass class_mode unique_classes coverage nofetal1998.parquet</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> IDADMISALUD <span style="color: #BB0000;">NA</span>       integer    integer              52 <span style="color: #BB0000;">NA</span>                 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> IDADMISALU  <span style="color: #BB0000;">NA</span>       integer    integer               8 <span style="color: #BB0000;">NA</span>                 </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> IDADMISALUD integer  integer    integer              52 <span style="color: #BB0000;">NA</span>                 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> IDADMISALU  integer  integer    integer               8 <span style="color: #BB0000;">NA</span>                 </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 24 more variables: nofetal1999.parquet &lt;chr&gt;, nofetal2000.parquet &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   nofetal2001.parquet &lt;chr&gt;, nofetal2002.parquet &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   nofetal2003.parquet &lt;chr&gt;, nofetal2004.parquet &lt;chr&gt;,</span></span></span>
@@ -310,17 +289,17 @@ the selected <code>uniname</code> with the rows of the discarded
 <code>uniname</code>. Finally, delete the discarded
 <code>uniname</code>. This could be easily done directly in Excel,
 however this code also satisfy our needs.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">'Before unification:'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Before unification:"</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dict</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">uniname</span> <span class="op">==</span> <span class="st">'IDADMISALUD'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">nofetal2012.parquet</span>, <span class="va">nofetal2013.parquet</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
 <span><span class="co">#&gt;   nofetal2012.parquet nofetal2013.parquet</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> <span style="color: #BB0000;">NA</span>                  <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">dict</span> <span class="op">&lt;-</span> <span class="va">dict</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="co"># Update the rows of `IDADMISALUD`.</span></span>
@@ -334,7 +313,7 @@ however this code also satisfy our needs.</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">'After unification:'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "After unification:"</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dict</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">uniname</span> <span class="op">==</span> <span class="st">'IDADMISALUD'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">nofetal2012.parquet</span>, <span class="va">nofetal2013.parquet</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
@@ -349,13 +328,13 @@ this we just need the year and sex variable. By looking our dictionary
 we notice that the <code>uninames</code> <code>ANO</code> and
 <code>SEXO</code> have a integer related variable in all files (despite
 the names are case sensitive different).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dict</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">uniname</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'ANO'</span>, <span class="st">'SEXO'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 30</span></span></span>
 <span><span class="co">#&gt;   uniname uniclass class_mode unique_classes coverage nofetal1998.parquet</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ANO     <span style="color: #BB0000;">NA</span>       integer    integer             100 ano                </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> SEXO    <span style="color: #BB0000;">NA</span>       integer    integer             100 sexo               </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ANO     integer  integer    integer             100 ano                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> SEXO    integer  integer    integer             100 sexo               </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 24 more variables: nofetal1999.parquet &lt;chr&gt;, nofetal2000.parquet &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   nofetal2001.parquet &lt;chr&gt;, nofetal2002.parquet &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   nofetal2003.parquet &lt;chr&gt;, nofetal2004.parquet &lt;chr&gt;,</span></span></span>
@@ -381,7 +360,7 @@ things:</p>
 </ul>
 <p>In the following chunk, this just represents four lines, the rest is
 the same for any scenario. In other words, this is a template!</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># BEGAN MODIFY:  Which columns you need?</span></span>
 <span><span class="va">SELECTED_COLUMNS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'ANO'</span>, <span class="st">'SEXO'</span><span class="op">)</span></span>
 <span><span class="co"># END MODIFY. </span></span>
@@ -400,7 +379,7 @@ the same for any scenario. In other words, this is a template!</p>
 <span>  </span>
 <span>  <span class="co"># Open file with lazy evaluation for speed (you could also use</span></span>
 <span>  <span class="co"># `read_parquet()`).</span></span>
-<span>  <span class="va">df0</span> <span class="op">&lt;-</span> <span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'%s/%s'</span>, <span class="va">folder</span>, <span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="va">df0</span> <span class="op">&lt;-</span> <span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">folder</span>, <span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="co"># Select `SELECTED_COLUMNS` and rename it with the `uniname`.</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">original_colnames</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select_all.html" class="external-link">rename_at</a></span><span class="op">(</span><span class="va">original_colnames</span>, <span class="op">~</span><span class="va">new_colnames</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -432,7 +411,7 @@ the same for any scenario. In other words, this is a template!</p>
 <span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># MODIFY: Process your data as required.</span></span>
 <span><span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">ANO</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>prop_ <span class="op">=</span> <span class="va">n_</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n_</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 50 × 4</span></span></span>
@@ -450,14 +429,14 @@ the same for any scenario. In other words, this is a template!</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">2</span>002     2    40  0.4 </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">2</span>002     1    60  0.6 </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 40 more rows</span></span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># END MODIFY. </span></span></code></pre></div>
 <p>But what if the per <code>uniname</code> the variable have different
 classes per file. Well, we need a small extra step. To see this lets
 artificially change the <code>ANO</code> integer class to a character
 for the 2022 file.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">path_file_2022</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'%s/%s'</span>, <span class="va">folder</span>, <span class="va">files</span><span class="op">[</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">files</span>, <span class="st">'2022'</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">path_file_2022</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">folder</span>, <span class="va">files</span><span class="op">[</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">files</span>, <span class="st">'2022'</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span><span class="va">path_file_2022</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ANO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">ANO</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://arrow.apache.org/docs/r/reference/write_parquet.html" class="external-link">write_parquet</a></span><span class="op">(</span><span class="va">path_file_2022</span><span class="op">)</span></span></code></pre></div>
@@ -469,14 +448,14 @@ two changes to our current methodology. First, we manually must fill the
 <code>uniclass</code> column of our dictionary for the problematic
 variable (in this case <code>ANO</code> must be an integer). Again, this
 could be easily done in Excel but for our purposes we will use code.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dict</span> <span class="op">&lt;-</span> <span class="va">dict</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>uniclass <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">uniname</span> <span class="op">==</span> <span class="st">'ANO'</span>, <span class="st">'integer'</span>, <span class="va">uniclass</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Then, we will add a few lines to our template so that for each file,
 the selected columns are force to have the data type of
 <code>uniclass</code>. The following code support: “integer”, “logical”,
 “numeric”, “character” and “date”. This makes our template larger, but
 does not add to us more work.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># BEGAN MODIFY:  Which columns you need?</span></span>
 <span><span class="va">SELECTED_COLUMNS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'ANO'</span>, <span class="st">'SEXO'</span><span class="op">)</span></span>
 <span><span class="co"># END MODIFY. </span></span>
@@ -487,7 +466,7 @@ does not add to us more work.</p>
 <span>  <span class="co"># always like that so you could copy and paste freely).</span></span>
 <span>  <span class="va">df_selected</span> <span class="op">&lt;-</span> <span class="va">dict</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">uniname</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">SELECTED_COLUMNS</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">uniname</span>, <span class="va">uniclass</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">uniname</span>, <span class="va">uniclass</span>, <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/drop_na.html" class="external-link">drop_na</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/replace.html" class="external-link">replace</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, <span class="st">''</span><span class="op">)</span></span>
 <span>  <span class="va">original_colnames</span> <span class="op">&lt;-</span> <span class="va">df_selected</span><span class="op">[[</span><span class="va">file</span><span class="op">]</span><span class="op">]</span></span>
@@ -496,7 +475,7 @@ does not add to us more work.</p>
 <span>  </span>
 <span>  <span class="co"># Open file with lazy evaluation for speed (you could also use</span></span>
 <span>  <span class="co"># `read_parquet()`).</span></span>
-<span>  <span class="va">df0</span> <span class="op">&lt;-</span> <span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'%s/%s'</span>, <span class="va">folder</span>, <span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="va">df0</span> <span class="op">&lt;-</span> <span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">folder</span>, <span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="co"># Select `SELECTED_COLUMNS` and rename it with the `uniname`.</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">original_colnames</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select_all.html" class="external-link">rename_at</a></span><span class="op">(</span><span class="va">original_colnames</span>, <span class="op">~</span><span class="va">new_colnames</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -550,7 +529,7 @@ does not add to us more work.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">2</span>002     2    40  0.4 </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">2</span>002     1    60  0.6 </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 40 more rows</span></span></span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># END MODIFY. </span></span></code></pre></div>
   </main>
 </div>

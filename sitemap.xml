@@ -49,6 +49,9 @@
     <loc>https://jdrengifoc.github.io/dataRC/reference/get_next_consecutives.html</loc>
   </url>
   <url>
+    <loc>https://jdrengifoc.github.io/dataRC/reference/get_unifying_file_info.html</loc>
+  </url>
+  <url>
     <loc>https://jdrengifoc.github.io/dataRC/reference/get_values_tic_msg.html</loc>
   </url>
   <url>
@@ -76,6 +79,9 @@
     <loc>https://jdrengifoc.github.io/dataRC/reference/read_fun.html</loc>
   </url>
   <url>
+    <loc>https://jdrengifoc.github.io/dataRC/reference/relocate_columns.html</loc>
+  </url>
+  <url>
     <loc>https://jdrengifoc.github.io/dataRC/reference/share_all_elements.html</loc>
   </url>
   <url>
@@ -83,6 +89,12 @@
   </url>
   <url>
     <loc>https://jdrengifoc.github.io/dataRC/reference/stata_month2ymd.html</loc>
+  </url>
+  <url>
+    <loc>https://jdrengifoc.github.io/dataRC/reference/unify_classes.html</loc>
+  </url>
+  <url>
+    <loc>https://jdrengifoc.github.io/dataRC/reference/unify_colnames.html</loc>
   </url>
   <url>
     <loc>https://jdrengifoc.github.io/dataRC/reference/unpartition_data.html</loc>
