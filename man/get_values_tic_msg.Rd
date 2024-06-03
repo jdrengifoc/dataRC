@@ -28,5 +28,4 @@ get_values_tic_msg(unit = 'min')
 
 # Extract elapsed time in hours
 get_values_tic_msg(unit = 'hour')
-
 }

@@ -30,5 +30,4 @@ if and only if, the file doesn't exists.
 \dontrun{
 file_size(c("file1.txt", "file2.txt"), units = 'kb')
 }
-
 }

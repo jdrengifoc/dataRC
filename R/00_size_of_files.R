@@ -14,7 +14,6 @@
 #' \dontrun{
 #' files_size(c("file1.txt", "file2.txt"), units = 'mb')
 #' }
-
 files_size <- function(files, units = 'bytes'){
   units <- tolower(units)
   unit_coefficients <- 1024^c(bytes = 0, kb = 1, mb = 2, gb = 3)
@@ -49,7 +48,6 @@ files_size <- function(files, units = 'bytes'){
 #' \dontrun{
 #' file_size(c("file1.txt", "file2.txt"), units = 'kb')
 #' }
-#'
 #' @import dplyr
 file_size <- function(files, units = 'bytes'){
   units <- tolower(units)

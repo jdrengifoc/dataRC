@@ -21,7 +21,6 @@
 #'
 #' # Extract elapsed time in hours
 #' get_values_tic_msg(unit = 'hour')
-#'
 #' @importFrom tictoc toc
 #' @importFrom stringr str_extract
 #' @export
@@ -194,13 +193,10 @@ n_digits_int <- function(x) {
 #' @returns A numeric atomic vector with length at most of `min(prev, post)`.
 #'
 #' @examples
-#' \dontrun{
 #' prev <- c(1, 3, 5)
 #' post <- c(2, 4, 6, 7)
 #' get_next_consecutives(prev, post)
 #' Output: 2, 4, 6.
-#' }
-#'
 #' @export
 get_next_consecutives <- function(prev, post) {
   post <- post[post > min(prev)]
