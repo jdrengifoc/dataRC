@@ -367,139 +367,13 @@ the same for any scenario. In other words, this is a template!</p>
 <span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">file</span> <span class="kw">in</span> <span class="va">files</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co"># Process partial dictionary (if you don't  understand don't worry this is</span></span>
-<span>  <span class="co"># always like that so you could copy and paste freely).</span></span>
-<span>  <span class="va">df_selected</span> <span class="op">&lt;-</span> <span class="va">dict</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">uniname</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">SELECTED_COLUMNS</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">uniname</span>, <span class="va">uniclass</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/drop_na.html" class="external-link">drop_na</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/replace.html" class="external-link">replace</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, <span class="st">''</span><span class="op">)</span></span>
-<span>  <span class="va">original_colnames</span> <span class="op">&lt;-</span> <span class="va">df_selected</span><span class="op">[[</span><span class="va">file</span><span class="op">]</span><span class="op">]</span></span>
-<span>  <span class="va">new_colnames</span> <span class="op">&lt;-</span> <span class="va">df_selected</span><span class="op">$</span><span class="va">uniname</span></span>
-<span>  </span>
 <span>  <span class="co"># Open file with lazy evaluation for speed (you could also use</span></span>
 <span>  <span class="co"># `read_parquet()`).</span></span>
 <span>  <span class="va">df0</span> <span class="op">&lt;-</span> <span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">folder</span>, <span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="co"># Select `SELECTED_COLUMNS` and rename it with the `uniname`.</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">original_colnames</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select_all.html" class="external-link">rename_at</a></span><span class="op">(</span><span class="va">original_colnames</span>, <span class="op">~</span><span class="va">new_colnames</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>    <span class="co"># Preserve order.</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">SELECTED_COLUMNS</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>    </span>
+<span>    <span class="fu"><a href="../reference/unify_colnames.html">unify_colnames</a></span><span class="op">(</span><span class="va">dict</span>, <span class="va">file</span>, <span class="va">SELECTED_COLUMNS</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="../reference/unify_classes.html">unify_classes</a></span><span class="op">(</span><span class="va">dict</span>, <span class="va">file</span>, <span class="va">SELECTED_COLUMNS</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="../reference/relocate_columns.html">relocate_columns</a></span><span class="op">(</span><span class="va">SELECTED_COLUMNS</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="co"># BEGAN MODIFY: Process your data as required  with the `uniname`s.</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">ANO</span>, <span class="va">SEXO</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n_ <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">ungroup</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>    <span class="co"># END MODIFY. </span></span>
-<span>    </span>
-<span>    <span class="co"># End lazy evaluation. If you use `read_parquet() this is unnecesary.</span></span>
-<span>    <span class="va">collect</span></span>
-<span>  </span>
-<span>  <span class="co"># Save the iteration results.</span></span>
-<span>  <span class="co"># NOTE: # If all columns are going to have the same columns is recommended to </span></span>
-<span>  <span class="co"># use `rbind()`.</span></span>
-<span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">df0</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co">#&gt; Warning: Using an external vector in selections was deprecated in tidyselect 1.1.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `all_of()` or `any_of()` instead.</span></span>
-<span><span class="co">#&gt;   # Was:</span></span>
-<span><span class="co">#&gt;   data %&gt;% select(file)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   # Now:</span></span>
-<span><span class="co">#&gt;   data %&gt;% select(all_of(file))</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># MODIFY: Process your data as required.</span></span>
-<span><span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">ANO</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>prop_ <span class="op">=</span> <span class="va">n_</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n_</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 50 × 4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   ANO [25]</span></span></span>
-<span><span class="co">#&gt;      ANO  SEXO    n_ prop_</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">1</span>998     2    43  0.43</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">1</span>998     1    57  0.57</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  <span style="text-decoration: underline;">1</span>999     1    78  0.78</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  <span style="text-decoration: underline;">1</span>999     2    22  0.22</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  <span style="text-decoration: underline;">2</span>000     2    38  0.38</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  <span style="text-decoration: underline;">2</span>000     1    62  0.62</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">2</span>001     1    78  0.78</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  <span style="text-decoration: underline;">2</span>001     2    22  0.22</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">2</span>002     2    40  0.4 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">2</span>002     1    60  0.6 </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 40 more rows</span></span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># END MODIFY. </span></span></code></pre></div>
-<p>But what if the per <code>uniname</code> the variable have different
-classes per file. Well, we need a small extra step. To see this lets
-artificially change the <code>ANO</code> integer class to a character
-for the 2022 file.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">path_file_2022</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">folder</span>, <span class="va">files</span><span class="op">[</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">files</span>, <span class="st">'2022'</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span><span class="va">path_file_2022</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ANO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">ANO</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://arrow.apache.org/docs/r/reference/write_parquet.html" class="external-link">write_parquet</a></span><span class="op">(</span><span class="va">path_file_2022</span><span class="op">)</span></span></code></pre></div>
-<p>Now, this is not a major problem, if we run the previous code we will
-obtain the same results, with the only difference that the
-<code>ANO</code> will be now a character. However, in many scenarios
-this could be problematic and inefficient. To solve this we need to make
-two changes to our current methodology. First, we manually must fill the
-<code>uniclass</code> column of our dictionary for the problematic
-variable (in this case <code>ANO</code> must be an integer). Again, this
-could be easily done in Excel but for our purposes we will use code.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dict</span> <span class="op">&lt;-</span> <span class="va">dict</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>uniclass <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">uniname</span> <span class="op">==</span> <span class="st">'ANO'</span>, <span class="st">'integer'</span>, <span class="va">uniclass</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Then, we will add a few lines to our template so that for each file,
-the selected columns are force to have the data type of
-<code>uniclass</code>. The following code support: “integer”, “logical”,
-“numeric”, “character” and “date”. This makes our template larger, but
-does not add to us more work.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># BEGAN MODIFY:  Which columns you need?</span></span>
-<span><span class="va">SELECTED_COLUMNS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'ANO'</span>, <span class="st">'SEXO'</span><span class="op">)</span></span>
-<span><span class="co"># END MODIFY. </span></span>
-<span></span>
-<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">file</span> <span class="kw">in</span> <span class="va">files</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co"># Process partial dictionary (if you don't  understand don't worry this is</span></span>
-<span>  <span class="co"># always like that so you could copy and paste freely).</span></span>
-<span>  <span class="va">df_selected</span> <span class="op">&lt;-</span> <span class="va">dict</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">uniname</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">SELECTED_COLUMNS</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">uniname</span>, <span class="va">uniclass</span>, <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/drop_na.html" class="external-link">drop_na</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/replace.html" class="external-link">replace</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, <span class="st">''</span><span class="op">)</span></span>
-<span>  <span class="va">original_colnames</span> <span class="op">&lt;-</span> <span class="va">df_selected</span><span class="op">[[</span><span class="va">file</span><span class="op">]</span><span class="op">]</span></span>
-<span>  <span class="va">new_colnames</span> <span class="op">&lt;-</span> <span class="va">df_selected</span><span class="op">$</span><span class="va">uniname</span></span>
-<span>  <span class="va">new_classes</span> <span class="op">&lt;-</span> <span class="va">df_selected</span><span class="op">$</span><span class="va">uniclass</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">tolower</span></span>
-<span>  </span>
-<span>  <span class="co"># Open file with lazy evaluation for speed (you could also use</span></span>
-<span>  <span class="co"># `read_parquet()`).</span></span>
-<span>  <span class="va">df0</span> <span class="op">&lt;-</span> <span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">folder</span>, <span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="co"># Select `SELECTED_COLUMNS` and rename it with the `uniname`.</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">original_colnames</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select_all.html" class="external-link">rename_at</a></span><span class="op">(</span><span class="va">original_colnames</span>, <span class="op">~</span><span class="va">new_colnames</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>    <span class="co"># Preserve order.</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">SELECTED_COLUMNS</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>    <span class="co"># Force the class.</span></span>
-<span>    <span class="co"># NOTE: Lazy evaluation is picky, so if you have problematic values</span></span>
-<span>    <span class="co"># (e.g. "" to numeric), you will need to filter those observations or collect.</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">new_colnames</span><span class="op">[</span><span class="va">new_classes</span> <span class="op">==</span> <span class="st">'numeric'</span><span class="op">]</span><span class="op">)</span>, <span class="va">as.numeric</span><span class="op">)</span>,</span>
-<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">new_colnames</span><span class="op">[</span><span class="va">new_classes</span> <span class="op">==</span> <span class="st">'integer'</span><span class="op">]</span><span class="op">)</span>, <span class="va">as.integer</span><span class="op">)</span>,</span>
-<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">new_colnames</span><span class="op">[</span><span class="va">new_classes</span> <span class="op">==</span> <span class="st">'character'</span><span class="op">]</span><span class="op">)</span>, <span class="va">as.character</span><span class="op">)</span>,</span>
-<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">new_colnames</span><span class="op">[</span><span class="va">new_classes</span> <span class="op">==</span> <span class="st">'date'</span><span class="op">]</span><span class="op">)</span>, <span class="fu">lubridate</span><span class="fu">::</span><span class="va"><a href="https://lubridate.tidyverse.org/reference/ymd.html" class="external-link">ymd</a></span><span class="op">)</span>,</span>
-<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">new_colnames</span><span class="op">[</span><span class="va">new_classes</span> <span class="op">==</span> <span class="st">'logical'</span><span class="op">]</span><span class="op">)</span>, <span class="va">as.logical</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    </span>
-<span>    <span class="co"># BEGAN MODIFY: Process your data as required  with the `uniname`s. </span></span>
-<span>    <span class="co"># NOTE:  Again lazy evaluation is picky and is still on develop to support</span></span>
-<span>    <span class="co"># more functions. Therefore, some features cannot be done in it, such as</span></span>
-<span>    <span class="co"># `dplyr::slice` or window functions. If this is the case you can collect</span></span>
-<span>    <span class="co"># and do the processing normally, however this could consume a lot of time,</span></span>
-<span>    <span class="co"># then you could  be creative and look for another way to achieve the</span></span>
-<span>    <span class="co"># objective. Nevertheless, one option is to employ the function</span></span>
-<span>    <span class="co"># `arrow::to_duckdb()`, which allow you to use more function without</span></span>
-<span>    <span class="co"># increasing to much the time consumption.</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">ANO</span>, <span class="va">SEXO</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n_ <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">ungroup</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="co"># END MODIFY. </span></span>
@@ -529,7 +403,90 @@ does not add to us more work.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">2</span>002     2    40  0.4 </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">2</span>002     1    60  0.6 </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 40 more rows</span></span></span></code></pre></div>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># END MODIFY. </span></span></code></pre></div>
+<p>But what if the per <code>uniname</code> the variable have different
+classes per file. Well, we need a small extra step. To see this lets
+artificially change the <code>ANO</code> integer class to a character
+for the 2022 file.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">path_file_2022</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">folder</span>, <span class="va">files</span><span class="op">[</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">files</span>, <span class="st">'2022'</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span><span class="va">path_file_2022</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ANO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">ANO</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://arrow.apache.org/docs/r/reference/write_parquet.html" class="external-link">write_parquet</a></span><span class="op">(</span><span class="va">path_file_2022</span><span class="op">)</span></span></code></pre></div>
+<p>Now, this is not a major problem, if we run the previous code we will
+obtain the same results, with the only difference that the
+<code>ANO</code> will be now a character. However, in many scenarios
+this could be problematic and inefficient. To solve this we need to make
+two changes to our current methodology. First, we manually must fill the
+<code>uniclass</code> column of our dictionary for the problematic
+variable (in this case <code>ANO</code> must be an integer). Again, this
+could be easily done in Excel but for our purposes we will use code.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dict</span> <span class="op">&lt;-</span> <span class="va">dict</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>uniclass <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">uniname</span> <span class="op">==</span> <span class="st">'ANO'</span>, <span class="st">'integer'</span>, <span class="va">uniclass</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Then, we will add a few lines to our template so that for each file,
+the selected columns are force to have the data type of
+<code>uniclass</code>. The following code support: “integer”, “logical”,
+“numeric”, “character” and “date”. This makes our template larger, but
+does not add to us more work.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># BEGAN MODIFY:  Which columns you need?</span></span>
+<span><span class="va">SELECTED_COLUMNS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'ANO'</span>, <span class="st">'SEXO'</span><span class="op">)</span></span>
+<span><span class="co"># END MODIFY. </span></span>
+<span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">file</span> <span class="kw">in</span> <span class="va">files</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Open file with lazy evaluation for speed (you could also use</span></span>
+<span>  <span class="co"># `read_parquet()`).</span></span>
+<span>  <span class="va">df0</span> <span class="op">&lt;-</span> <span class="fu">arrow</span><span class="fu">::</span><span class="fu"><a href="https://arrow.apache.org/docs/r/reference/open_dataset.html" class="external-link">open_dataset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">folder</span>, <span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="co"># Select `SELECTED_COLUMNS` and rename it with the `uniname`s.</span></span>
+<span>    <span class="fu"><a href="../reference/unify_colnames.html">unify_colnames</a></span><span class="op">(</span><span class="va">dict</span>, <span class="va">file</span>, <span class="va">SELECTED_COLUMNS</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="co"># Force the class. NOTE: Lazy evaluation is picky, so if you have</span></span>
+<span>    <span class="co"># problematic values (e.g. "" to numeric), you will need to filter those</span></span>
+<span>    <span class="co"># observations or collect.</span></span>
+<span>    <span class="fu"><a href="../reference/unify_classes.html">unify_classes</a></span><span class="op">(</span><span class="va">dict</span>, <span class="va">file</span>, <span class="va">SELECTED_COLUMNS</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="co"># Preserve order.</span></span>
+<span>    <span class="fu"><a href="../reference/relocate_columns.html">relocate_columns</a></span><span class="op">(</span><span class="va">SELECTED_COLUMNS</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    </span>
+<span>    <span class="co"># BEGAN MODIFY: Process your data as required  with the `uniname`s. NOTE:</span></span>
+<span>    <span class="co"># Again lazy evaluation is picky and is still on develop to support more</span></span>
+<span>    <span class="co"># functions. Therefore, some features cannot be done in it, such as</span></span>
+<span>    <span class="co"># `dplyr::slice` or window functions. If this is the case you can collect</span></span>
+<span>    <span class="co"># and do the processing normally, however this could consume a lot of time,</span></span>
+<span>    <span class="co"># then you could  be creative and look for another way to achieve the</span></span>
+<span>    <span class="co"># objective. Nevertheless, one option is to employ the function</span></span>
+<span>    <span class="co"># `arrow::to_duckdb()`, which allow you to use more function without</span></span>
+<span>    <span class="co"># increasing to much the time consumption.</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">ANO</span>, <span class="va">SEXO</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n_ <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">ungroup</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="co"># END MODIFY. </span></span>
+<span>  </span>
+<span>    <span class="co"># End lazy evaluation. If you use `read_parquet() this is unnecesary.</span></span>
+<span>    <span class="va">collect</span></span>
+<span>  </span>
+<span>  <span class="co"># Save the iteration results.</span></span>
+<span>  <span class="co"># NOTE: # If all columns are going to have the same columns is recommended to </span></span>
+<span>  <span class="co"># use `rbind()`.</span></span>
+<span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">df0</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co"># MODIFY: Process your data as required.</span></span>
+<span><span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">ANO</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>prop_ <span class="op">=</span> <span class="va">n_</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n_</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 50 × 4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   ANO [25]</span></span></span>
+<span><span class="co">#&gt;      ANO  SEXO    n_ prop_</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">1</span>998     2    43  0.43</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">1</span>998     1    57  0.57</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  <span style="text-decoration: underline;">1</span>999     1    78  0.78</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  <span style="text-decoration: underline;">1</span>999     2    22  0.22</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  <span style="text-decoration: underline;">2</span>000     2    38  0.38</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  <span style="text-decoration: underline;">2</span>000     1    62  0.62</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">2</span>001     1    78  0.78</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  <span style="text-decoration: underline;">2</span>001     2    22  0.22</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">2</span>002     2    40  0.4 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">2</span>002     1    60  0.6 </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 40 more rows</span></span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># END MODIFY. </span></span></code></pre></div>
   </main>
 </div>
