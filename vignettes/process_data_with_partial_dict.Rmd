@@ -153,25 +153,12 @@ SELECTED_COLUMNS <- c('ANO', 'SEXO')
 
 df <- NULL
 for (file in files) {
-  # Process partial dictionary (if you don't  understand don't worry this is
-  # always like that so you could copy and paste freely).
-  df_selected <- dict %>% 
-    dplyr::filter(uniname %in% SELECTED_COLUMNS) %>%
-    dplyr::select(uniname, uniclass, all_of(file)) %>%
-    tidyr::drop_na(file) %>%
-    base::replace(is.na(.), '')
-  original_colnames <- df_selected[[file]]
-  new_colnames <- df_selected$uniname
-  
   # Open file with lazy evaluation for speed (you could also use
   # `read_parquet()`).
   df0 <- arrow::open_dataset(file.path(folder, file)) %>%
-    # Select `SELECTED_COLUMNS` and rename it with the `uniname`.
-    dplyr::select(all_of(original_colnames)) %>%
-    dplyr::rename_at(original_colnames, ~new_colnames) %>% 
-    # Preserve order.
-    dplyr::select(all_of(SELECTED_COLUMNS)) %>% 
-    
+    unify_colnames(dict, file, SELECTED_COLUMNS) %>% 
+    unify_classes(dict, file, SELECTED_COLUMNS) %>% 
+    relocate_columns(SELECTED_COLUMNS) %>% 
     # BEGAN MODIFY: Process your data as required  with the `uniname`s.
     dplyr::group_by(ANO, SEXO) %>% 
     summarise(n_ = n()) %>% ungroup %>% 
@@ -208,38 +195,21 @@ SELECTED_COLUMNS <- c('ANO', 'SEXO')
 
 df <- NULL
 for (file in files) {
-  # Process partial dictionary (if you don't  understand don't worry this is
-  # always like that so you could copy and paste freely).
-  df_selected <- dict %>% 
-    dplyr::filter(uniname %in% SELECTED_COLUMNS) %>%
-    dplyr::select(uniname, uniclass, dplyr::all_of(file)) %>%
-    tidyr::drop_na(file) %>%
-    base::replace(is.na(.), '')
-  original_colnames <- df_selected[[file]]
-  new_colnames <- df_selected$uniname
-  new_classes <- df_selected$uniclass %>% tolower
-  
   # Open file with lazy evaluation for speed (you could also use
   # `read_parquet()`).
   df0 <- arrow::open_dataset(file.path(folder, file)) %>%
-    # Select `SELECTED_COLUMNS` and rename it with the `uniname`.
-    dplyr::select(all_of(original_colnames)) %>%
-    dplyr::rename_at(original_colnames, ~new_colnames) %>% 
+    # Select `SELECTED_COLUMNS` and rename it with the `uniname`s.
+    unify_colnames(dict, file, SELECTED_COLUMNS) %>% 
+    # Force the class. NOTE: Lazy evaluation is picky, so if you have
+    # problematic values (e.g. "" to numeric), you will need to filter those
+    # observations or collect.
+    unify_classes(dict, file, SELECTED_COLUMNS) %>% 
     # Preserve order.
-    dplyr::select(all_of(SELECTED_COLUMNS)) %>% 
-    # Force the class.
-    # NOTE: Lazy evaluation is picky, so if you have problematic values
-    # (e.g. "" to numeric), you will need to filter those observations or collect.
-    dplyr::mutate(
-      across(all_of(new_colnames[new_classes == 'numeric']), as.numeric),
-      across(all_of(new_colnames[new_classes == 'integer']), as.integer),
-      across(all_of(new_colnames[new_classes == 'character']), as.character),
-      across(all_of(new_colnames[new_classes == 'date']), lubridate::ymd),
-      across(all_of(new_colnames[new_classes == 'logical']), as.logical)) %>%
+    relocate_columns(SELECTED_COLUMNS) %>% 
     
-    # BEGAN MODIFY: Process your data as required  with the `uniname`s. 
-    # NOTE:  Again lazy evaluation is picky and is still on develop to support
-    # more functions. Therefore, some features cannot be done in it, such as
+    # BEGAN MODIFY: Process your data as required  with the `uniname`s. NOTE:
+    # Again lazy evaluation is picky and is still on develop to support more
+    # functions. Therefore, some features cannot be done in it, such as
     # `dplyr::slice` or window functions. If this is the case you can collect
     # and do the processing normally, however this could consume a lot of time,
     # then you could  be creative and look for another way to achieve the
@@ -249,7 +219,7 @@ for (file in files) {
     dplyr::group_by(ANO, SEXO) %>% 
     summarise(n_ = n()) %>% ungroup %>% 
     # END MODIFY. 
-    
+  
     # End lazy evaluation. If you use `read_parquet() this is unnecesary.
     collect
   
@@ -261,59 +231,5 @@ for (file in files) {
 # MODIFY: Process your data as required.
 df %>% group_by(ANO) %>% mutate(prop_ = n_ / sum(n_))
 # END MODIFY. 
-```
-
-```{r, include=FALSE}
-# dict_path <- sprintf('%s/dict_modified.xlsx', folder)
-# dict <- readxl::read_excel(dict_path) %>%
-#   dplyr::mutate(uniclass = tolower(uniclass))
-# files <- names(dict)[-(1L:4L)]
-# SELECTED_COLUMNS <- c('YEAR', 'ID', 'LOCATION')
-# 
-# df <- NULL
-# tic()
-# for (file in files) {
-#   sprintf('Began %s', file) %>% cat
-#   tic()
-#   df_selected <- dplyr::filter(dict, uniname %in% SELECTED_COLUMNS) %>%
-#     dplyr::select(uniname, uniclass, all_of(file)) %>%
-#     tidyr::drop_na(file) %>%
-#     base::replace(is.na(.), '')
-# 
-#   original_colnames <- df_selected[[file]]
-#   new_colnames <- df_selected$uniname
-#   new_classes <- df_selected$uniclass
-# 
-#   df0 <- arrow::open_dataset(sprintf('%s/%s', folder, file)) %>%
-#     dplyr::select(all_of(original_colnames)) %>%
-#     dplyr::rename_at(original_colnames, ~new_colnames) %>%
-#     # Lazy evaluation is picky, so if you have problematic values
-#     # (e.g. "" to numeric), you will need to filter those observations or collect.
-#     dplyr::mutate(
-#       across(all_of(new_colnames[new_classes == 'numeric']), as.numeric),
-#       across(all_of(new_colnames[new_classes == 'integer']), as.integer),
-#       across(all_of(new_colnames[new_classes == 'date']), lubridate::ymd),
-#       across(all_of(new_colnames[new_classes == 'logical']), as.logical)) %>%
-#     # Process data as required. Again lazy evaluation is picky and is still on
-#     # develop to support more functions. Therefore, some features
-#     # cannot be done in it, such as `dplyr::slice` or window functions. If this
-#     # is the case you can collect and do the processing normally, however this
-#     # could consume a lot of time, then you could  be creative and look for
-#     # another way to achieve the objective. Nevertheless, one option is to
-#     # employ the function `arrow::to_duckdb`, which allow you to use more
-#     # function without increasing the time consumption.
-#     arrow::to_duckdb() %>%
-#     dplyr::slice_sample(n = 10) %>%
-#     dplyr::group_by(ID) %>%
-#     dplyr::mutate(aux = max(LOCATION, ID)) %>% collect
-#   # If all columns are going to have the same columns is recommended to use
-#   #`rbind.`
-#   df <- dplyr::bind_rows(df, df0)
-# 
-#   sprintf('\n\tCompleted in %f sec.\n', get_values_tic_msg()) %>% cat
-# }
-# 
-# sprintf('\nThe process was completed in %f min.',
-        # get_values_tic_msg(unit = 'min')) %>% cat
 ```
 
