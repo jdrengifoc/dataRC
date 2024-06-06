@@ -69,13 +69,16 @@ files, which is shared across all files.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>folder</dt>
-<dd><p>The path to the folder containing the original files.</p></dd>
+<dd><p>The path to the folder containing the original files. The
+default is <code>"."</code>, that is, the current directory.</p></dd>
 
 
 <dt>files</dt>
-<dd><p>A character vector with the file paths to be copy. The paths must
-satisfy the following properties:</p><ul><li><p>The path must start from the <code>folder</code> path.</p></li>
-<li><p>Have a file extensions supported by <code><a href="read_fun.html">read_fun()</a></code>.</p></li>
+<dd><p>A character vector with the file paths to be copy, by default is
+<code>list.files(folder, recursive = T)</code>, that is, the list of files and
+directories within the specified folder, including all subdirectories
+recursively. The paths must satisfy the following properties:</p><ul><li><p>The path must start from the <code>folder</code> path.</p></li>
+<li><p>Have a file extension supported by <code><a href="read_fun.html">read_fun()</a></code>.</p></li>
 </ul></dd>
 
 
