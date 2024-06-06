@@ -144,13 +144,16 @@ write_fun <- function(extension, ...) {
 #'specified format (or extension). The user can set the location of the new
 #'files, which is shared across all files.
 #'
-#'@param folder The path to the folder containing the original files.
-#'@param files A character vector with the file paths to be copy. The paths must
-#'  satisfy the following properties:
+#'@param folder The path to the folder containing the original files. The
+#'  default is `"."`, that is, the current directory.
+#'@param files A character vector with the file paths to be copy, by default is
+#'  `list.files(folder, recursive = T)`, that is, the list of files and
+#'  directories within the specified folder, including all subdirectories
+#'  recursively. The paths must satisfy the following properties:
 #'
 #'  * The path must start from the `folder` path.
 #'
-#'  * Have a file extensions supported by [dataRC::read_fun()].
+#'  * Have a file extension supported by [dataRC::read_fun()].
 #'@param new_extension A string with the format that must have the copies of the
 #'  original files. Must be a extension supported by [dataRC::write_fun()].
 #'@param new_folder The path to the folder where the converted files will be
@@ -158,7 +161,7 @@ write_fun <- function(extension, ...) {
 #'  new folder will be created inside the original folder with the same name.
 #'@param verbose Logical (the default is `TRUE`) indicating whether to display
 #'  progress messages.
-#' @returns None.
+#'@returns None.
 #'
 #'@details This function is robust to uppercase and dots in the new extension.
 #'  If the `new_folder` argument is not provided, the new folder will be created

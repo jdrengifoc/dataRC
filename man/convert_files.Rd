@@ -13,13 +13,16 @@ convert_files(
 )
 }
 \arguments{
-\item{folder}{The path to the folder containing the original files.}
+\item{folder}{The path to the folder containing the original files. The
+default is \code{"."}, that is, the current directory.}
 
-\item{files}{A character vector with the file paths to be copy. The paths must
-satisfy the following properties:
+\item{files}{A character vector with the file paths to be copy, by default is
+\code{list.files(folder, recursive = T)}, that is, the list of files and
+directories within the specified folder, including all subdirectories
+recursively. The paths must satisfy the following properties:
 \itemize{
 \item The path must start from the \code{folder} path.
-\item Have a file extensions supported by \code{\link[=read_fun]{read_fun()}}.
+\item Have a file extension supported by \code{\link[=read_fun]{read_fun()}}.
 }}
 
 \item{new_extension}{A string with the format that must have the copies of the
